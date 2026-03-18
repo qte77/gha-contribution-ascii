@@ -54,17 +54,7 @@ invert_bitmap() {
     local -a inverted=()
     local row
     for row in "${BITMAP_ROWS[@]}"; do
-        local new_row=""
-        local i
-        for ((i = 0; i < ${#row}; i++)); do
-            local pixel="${row:$i:1}"
-            if [[ "$pixel" == "1" ]]; then
-                new_row+="0"
-            else
-                new_row+="1"
-            fi
-        done
-        inverted+=("$new_row")
+        inverted+=("$(echo "$row" | tr '01' '10')")
     done
     BITMAP_ROWS=("${inverted[@]}")
 }

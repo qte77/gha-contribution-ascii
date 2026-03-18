@@ -64,25 +64,3 @@ setup() {
     result=$(bitmap_pos_to_date "2025-01-05" 3 2)
     [ "$result" = "2025-01-22" ]
 }
-
-@test "generate_date_map 2 cols produces 14 lines" {
-    local output
-    output=$(generate_date_map "2025-01-05" 2 7)
-    local count
-    count=$(echo "$output" | wc -l)
-    [ "$count" -eq 14 ]
-}
-
-@test "generate_date_map first line is row 0 col 0" {
-    local output
-    output=$(generate_date_map "2025-01-05" 1 7)
-    local first
-    first=$(echo "$output" | head -1)
-    [ "$first" = "0 0 2025-01-05" ]
-}
-
-@test "date_to_git_timestamp formats correctly" {
-    local result
-    result=$(date_to_git_timestamp "2025-03-15")
-    [ "$result" = "2025-03-15T12:00:00" ]
-}

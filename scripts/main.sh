@@ -6,12 +6,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# bitmap.sh sources font.sh; generate.sh sources dates.sh + contributions.sh
 # shellcheck source=bitmap.sh
 source "${SCRIPT_DIR}/bitmap.sh"
-# shellcheck source=dates.sh
-source "${SCRIPT_DIR}/dates.sh"
-# shellcheck source=contributions.sh
-source "${SCRIPT_DIR}/contributions.sh"
 # shellcheck source=generate.sh
 source "${SCRIPT_DIR}/generate.sh"
 
@@ -65,25 +62,26 @@ main() {
         echo "::warning::Text is ${BITMAP_WIDTH} columns wide but graph is 52 columns. Text will be truncated."
     fi
 
+    # Resolve username once (needed for compensation and repo setup)
+    local username=""
+    if [[ -n "$token" ]]; then
+        username=$(gh api user --jq '.login' 2>/dev/null) || {
+            echo "::warning::Could not determine username."
+            username=""
+        }
+    fi
+
     # Step 3: Query existing contributions (if compensating)
     local contributions_json="none"
-    if [[ "$compensate" == "true" && -n "$token" ]]; then
+    if [[ "$compensate" == "true" && -n "$username" ]]; then
         echo ""
         echo "--- Querying existing contributions ---"
-        local username
-        username=$(gh api user --jq '.login' 2>/dev/null) || {
-            echo "::warning::Could not determine username. Skipping compensation."
-            compensate="false"
+        local end_date
+        end_date=$(date -d "$start_date + $((BITMAP_WIDTH * 7)) days" +%Y-%m-%d)
+        contributions_json=$(query_contributions "$token" "$username" "$start_date" "$end_date") || {
+            echo "::warning::Could not query contributions. Proceeding without compensation."
+            contributions_json="none"
         }
-
-        if [[ "$compensate" == "true" ]]; then
-            local end_date
-            end_date=$(date -d "$start_date + $((BITMAP_WIDTH * 7)) days" +%Y-%m-%d)
-            contributions_json=$(query_contributions "$token" "$username" "$start_date" "$end_date") || {
-                echo "::warning::Could not query contributions. Proceeding without compensation."
-                contributions_json="none"
-            }
-        fi
     fi
 
     # Step 4: Generate commit plan
@@ -103,9 +101,9 @@ main() {
     while IFS= read -r line; do
         local count="${line##* }"
         if [[ "$count" == "CONFLICT" ]]; then
-            ((conflict_count++))
+            conflict_count=$((conflict_count + 1))
         elif [[ "$count" -gt 0 ]]; then
-            ((total_commits += count))
+            total_commits=$((total_commits + count))
         fi
     done <<< "$plan"
 
@@ -136,8 +134,10 @@ main() {
 
     echo ""
     echo "--- Setting up painting repo ---"
-    local username
-    username=$(gh api user --jq '.login')
+    if [[ -z "$username" ]]; then
+        echo "::error::Could not determine GitHub username. TOKEN may be invalid."
+        exit 1
+    fi
     local repo_full="${username}/${repo_name}"
 
     # Create private repo if it doesn't exist

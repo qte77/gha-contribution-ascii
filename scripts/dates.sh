@@ -45,26 +45,3 @@ bitmap_pos_to_date() {
     local days_offset=$(( col * 7 + row ))
     date -d "$start_date + $days_offset days" +%Y-%m-%d
 }
-
-# generate_date_map: Generate a full date map for all bitmap positions.
-# Args: $1 = start_date, $2 = num_columns (weeks), $3 = num_rows (7)
-# Output: Lines of "ROW COL YYYY-MM-DD"
-generate_date_map() {
-    local start_date="${1}" num_cols="${2}" num_rows="${3:-7}"
-
-    local col row
-    for ((col = 0; col < num_cols; col++)); do
-        for ((row = 0; row < num_rows; row++)); do
-            local target_date
-            target_date=$(bitmap_pos_to_date "$start_date" "$row" "$col")
-            echo "$row $col $target_date"
-        done
-    done
-}
-
-# date_to_git_timestamp: Format a date for GIT_AUTHOR_DATE / GIT_COMMITTER_DATE.
-# Args: $1 = YYYY-MM-DD
-# Output: "YYYY-MM-DDT12:00:00" (noon UTC)
-date_to_git_timestamp() {
-    echo "${1}T12:00:00"
-}

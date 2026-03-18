@@ -41,8 +41,6 @@ generate_commits_for_date() {
     fi
 
     cd "$repo_path"
-    local timestamp
-    timestamp=$(date_to_git_timestamp "$target_date")
 
     local i
     for ((i = 1; i <= count; i++)); do
@@ -70,17 +68,12 @@ generate_commit_plan() {
     done < "$bitmap_file"
 
     local width=${#bitmap_rows[0]}
-    local thresholds=""
-
+    local thresholds
+    # Reason: compute_intensity_thresholds handles empty input (returns 0-4 defaults)
     if [[ "$contributions_json" != "none" ]]; then
         thresholds=$(compute_intensity_thresholds "$contributions_json")
     else
-        # Default thresholds (no existing contributions)
-        thresholds="0
-1
-2
-3
-4"
+        thresholds=$(compute_intensity_thresholds "[]")
     fi
 
     local col row
