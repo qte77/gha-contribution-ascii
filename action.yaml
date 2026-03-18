@@ -1,0 +1,50 @@
+# https://docs.github.com/en/actions/sharing-automations/creating-actions/creating-a-composite-action
+name: "Contribution Graph ASCII"
+description: "Write ASCII text on your GitHub contribution graph with interference compensation."
+author: "qte77"
+branding:
+  icon: "grid"
+  color: "green"
+inputs:
+  TEXT:
+    description: "ASCII text to render on the contribution graph."
+    required: true
+  TOKEN:
+    description: "PAT with repo, read:user, user:email scopes."
+    required: true
+  REPO_NAME:
+    description: "Dedicated private repo name for painting commits."
+    default: "contribution-art"
+  INTENSITY:
+    description: "Commit intensity level (1-4)."
+    default: "4"
+  INVERSE:
+    description: "Invert colors (dark=high intensity). Helps with existing contributions."
+    default: "false"
+  START_DATE:
+    description: "Start date for rendering (YYYY-MM-DD). Default: 52 weeks ago, adjusted to Sunday."
+    default: ""
+  COMPENSATE:
+    description: "Query existing contributions and adjust commit counts."
+    default: "true"
+  DRY_RUN:
+    description: "Preview bitmap and commit plan without pushing."
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - name: Render and paint contribution graph
+      shell: bash
+      env:
+        INPUT_TEXT: ${{ inputs.TEXT }}
+        INPUT_TOKEN: ${{ inputs.TOKEN }}
+        INPUT_REPO_NAME: ${{ inputs.REPO_NAME }}
+        INPUT_INTENSITY: ${{ inputs.INTENSITY }}
+        INPUT_INVERSE: ${{ inputs.INVERSE }}
+        INPUT_START_DATE: ${{ inputs.START_DATE }}
+        INPUT_COMPENSATE: ${{ inputs.COMPENSATE }}
+        INPUT_DRY_RUN: ${{ inputs.DRY_RUN }}
+        GH_TOKEN: ${{ inputs.TOKEN }}
+      run: |
+        chmod +x "${{ github.action_path }}/scripts/"*.sh
+        "${{ github.action_path }}/scripts/main.sh"
