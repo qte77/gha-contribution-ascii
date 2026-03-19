@@ -39,16 +39,17 @@ main() {
     text_to_bitmap "$text"
     echo "Bitmap dimensions: ${BITMAP_WIDTH}w x ${BITMAP_HEIGHT}h"
 
-    if [[ "$inverse" == "true" ]]; then
-        invert_bitmap
-    fi
-
-    # Preview bitmap
+    # Preview bitmap (swap display chars for inverse so user sees final appearance)
     local row
     for ((row = 0; row < BITMAP_HEIGHT; row++)); do
         local display="${BITMAP_ROWS[$row]}"
-        display="${display//1/█}"
-        display="${display//0/░}"
+        if [[ "$inverse" == "true" ]]; then
+            display="${display//1/░}"
+            display="${display//0/█}"
+        else
+            display="${display//1/█}"
+            display="${display//0/░}"
+        fi
         echo "$display"
     done
 
