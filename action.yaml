@@ -16,7 +16,7 @@ inputs:
     description: "Dedicated private repo name for painting commits."
     default: "contribution-art"
   INTENSITY:
-    description: "Commit intensity level (1-4)."
+    description: "Fallback commit count when COMPENSATE is off. When on, auto-computed from your max."
     default: "4"
   INVERSE:
     description: "Invert colors (dark=high intensity). Helps with existing contributions."
