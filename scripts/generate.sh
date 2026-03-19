@@ -54,11 +54,11 @@ generate_commits_for_date() {
 }
 
 # generate_commit_plan: Build a commit plan from bitmap + dates + compensation.
-# Args: $1 = bitmap_rows_file (7 lines), $2 = start_date, $3 = intensity (1-4),
+# Args: $1 = bitmap_rows_file (7 lines), $2 = start_date, $3 = target_count,
 #        $4 = contributions_json (or "none"), $5 = inverse (true/false)
 # Output: Lines of "YYYY-MM-DD COUNT" (or "YYYY-MM-DD CONFLICT")
 generate_commit_plan() {
-    local bitmap_file="${1}" start_date="${2}" intensity="${3}"
+    local bitmap_file="${1}" start_date="${2}" target_count="${3}"
     local contributions_json="${4}" inverse="${5:-false}"
 
     # Read bitmap rows
@@ -68,13 +68,6 @@ generate_commit_plan() {
     done < "$bitmap_file"
 
     local width=${#bitmap_rows[0]}
-    local thresholds
-    # Reason: compute_intensity_thresholds handles empty input (returns 0-4 defaults)
-    if [[ "$contributions_json" != "none" ]]; then
-        thresholds=$(compute_intensity_thresholds "$contributions_json")
-    else
-        thresholds=$(compute_intensity_thresholds "[]")
-    fi
 
     local col row
     for ((col = 0; col < width; col++)); do
@@ -83,21 +76,12 @@ generate_commit_plan() {
             local target_date
             target_date=$(bitmap_pos_to_date "$start_date" "$row" "$col")
 
-            local target_level
+            # Determine if this pixel should be green or gray
+            local wants_green
             if [[ "$inverse" == "true" ]]; then
-                # Inverse: pixel ON = gray (0), pixel OFF = high intensity
-                if [[ "$pixel" == "1" ]]; then
-                    target_level=0
-                else
-                    target_level="$intensity"
-                fi
+                [[ "$pixel" == "0" ]] && wants_green=true || wants_green=false
             else
-                # Normal: pixel ON = high intensity, pixel OFF = gray (0)
-                if [[ "$pixel" == "1" ]]; then
-                    target_level="$intensity"
-                else
-                    target_level=0
-                fi
+                [[ "$pixel" == "1" ]] && wants_green=true || wants_green=false
             fi
 
             local existing=0
@@ -105,9 +89,17 @@ generate_commit_plan() {
                 existing=$(get_contribution_count "$contributions_json" "$target_date")
             fi
 
-            local needed
-            needed=$(compute_needed_commits "$target_level" "$existing" "$thresholds")
-            echo "$target_date $needed"
+            if [[ "$wants_green" == "true" ]]; then
+                local needed=$((target_count - existing))
+                [[ $needed -lt 0 ]] && needed=0
+                echo "$target_date $needed"
+            else
+                if [[ "$existing" -gt 0 ]]; then
+                    echo "$target_date CONFLICT"
+                else
+                    echo "$target_date 0"
+                fi
+            fi
         done
     done
 }

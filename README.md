@@ -35,7 +35,7 @@ GitHub Action that writes ASCII text on your GitHub contribution graph (the gree
 | `TEXT` | — | yes | ASCII text to render |
 | `TOKEN` | — | yes | PAT with `repo`, `read:user`, `user:email` scopes |
 | `REPO_NAME` | `contribution-art` | no | Dedicated private repo name |
-| `INTENSITY` | `4` | no | Commit intensity level (1-4) |
+| `INTENSITY` | `4` | no | Fallback commit count when `COMPENSATE` is off |
 | `INVERSE` | `false` | no | Invert colors (helps with existing contributions) |
 | `START_DATE` | auto | no | Start date (YYYY-MM-DD), defaults to 52 weeks ago |
 | `COMPENSATE` | `true` | no | Query existing contributions and adjust |
@@ -64,7 +64,7 @@ The graph shows **total contributions per day** across all repos. The action han
 | Art needs gray, day has commits | **Conflict** | Logs warning, skips cell |
 | New contributions after painting | Art degrades | Re-run to repaint |
 
-**`COMPENSATE=true`** (default): Queries existing counts via GraphQL before painting and adjusts commit counts accordingly.
+**`COMPENSATE=true`** (default): Queries your full year of contributions, finds your max contribution day, and sets the target to max+1. This guarantees painted pixels land in the top quartile (darkest green). Existing counts on painted days are subtracted automatically.
 
 **`INVERSE=true`**: Swaps text/background — text becomes gray, background becomes green. Since background only *adds* commits, existing contributions help rather than hurt. Use this for busy profiles.
 

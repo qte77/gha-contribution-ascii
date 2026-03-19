@@ -29,7 +29,7 @@ main() {
 
     echo "=== Contribution Graph ASCII Writer ==="
     echo "Text: $text"
-    echo "Intensity: $intensity"
+    echo "Fallback intensity: $intensity"
     echo "Inverse: $inverse"
     echo "Dry run: $dry_run"
 
@@ -71,17 +71,28 @@ main() {
         }
     fi
 
-    # Step 3: Query existing contributions (if compensating)
+    # Step 3: Query existing contributions and compute target
     local contributions_json="none"
+    local target_count="$intensity"
     if [[ "$compensate" == "true" && -n "$username" ]]; then
         echo ""
-        echo "--- Querying existing contributions ---"
-        local end_date
-        end_date=$(date -d "$start_date + $((BITMAP_WIDTH * 7)) days" +%Y-%m-%d)
-        contributions_json=$(query_contributions "$token" "$username" "$start_date" "$end_date") || {
-            echo "::warning::Could not query contributions. Proceeding without compensation."
+        echo "--- Querying existing contributions (full year) ---"
+        local year_ago
+        year_ago=$(date -d "$start_date - 365 days" +%Y-%m-%d 2>/dev/null || date -d "365 days ago" +%Y-%m-%d)
+        local today
+        today=$(date +%Y-%m-%d)
+        contributions_json=$(query_contributions "$token" "$username" "$year_ago" "$today") || {
+            echo "::warning::Could not query contributions. Using fallback intensity=$intensity."
             contributions_json="none"
         }
+
+        if [[ "$contributions_json" != "none" ]]; then
+            local max_count
+            max_count=$(get_max_contribution_count "$contributions_json")
+            # Reason: exceed the user's max to guarantee darkest green (top quartile)
+            target_count=$((max_count + 1))
+            echo "Max existing contributions/day: $max_count -> target: $target_count"
+        fi
     fi
 
     # Step 4: Generate commit plan
@@ -92,7 +103,7 @@ main() {
     printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "$start_date" "$intensity" "$contributions_json" "$inverse")
+    plan=$(generate_commit_plan "$bitmap_file" "$start_date" "$target_count" "$contributions_json" "$inverse")
     rm -f "$bitmap_file"
 
     # Count totals

@@ -36,105 +36,20 @@ MOCK_CONTRIBUTIONS='[
     [ "$result" -eq 0 ]
 }
 
-@test "compute_intensity_thresholds with empty contributions" {
-    local empty='[]'
+@test "get_max_contribution_count returns max from data" {
     local result
-    result=$(compute_intensity_thresholds "$empty")
-    local lines
-    lines=$(echo "$result" | wc -l)
-    [ "$lines" -eq 5 ]
-    # First line (level 0) should be 0
-    local level0
-    level0=$(echo "$result" | head -1)
-    [ "$level0" -eq 0 ]
+    result=$(get_max_contribution_count "$MOCK_CONTRIBUTIONS")
+    [ "$result" -eq 10 ]
 }
 
-@test "compute_intensity_thresholds with contributions produces 5 levels" {
+@test "get_max_contribution_count returns 0 for empty array" {
     local result
-    result=$(compute_intensity_thresholds "$MOCK_CONTRIBUTIONS")
-    local lines
-    lines=$(echo "$result" | wc -l)
-    [ "$lines" -eq 5 ]
-}
-
-@test "compute_intensity_thresholds level 0 is always 0" {
-    local result
-    result=$(compute_intensity_thresholds "$MOCK_CONTRIBUTIONS")
-    local level0
-    level0=$(echo "$result" | sed -n '1p')
-    [ "$level0" -eq 0 ]
-}
-
-@test "compute_intensity_thresholds level 4 equals max count" {
-    local result
-    result=$(compute_intensity_thresholds "$MOCK_CONTRIBUTIONS")
-    local level4
-    level4=$(echo "$result" | sed -n '5p')
-    # Max in mock data is 10
-    [ "$level4" -eq 10 ]
-}
-
-@test "compute_intensity_thresholds levels are monotonically increasing" {
-    local result
-    result=$(compute_intensity_thresholds "$MOCK_CONTRIBUTIONS")
-    local prev=0
-    while IFS= read -r val; do
-        [ "$val" -ge "$prev" ]
-        prev="$val"
-    done <<< "$result"
-}
-
-@test "compute_needed_commits level 0 with no existing returns 0" {
-    local thresholds="0
-1
-2
-3
-4"
-    local result
-    result=$(compute_needed_commits 0 0 "$thresholds")
-    [ "$result" = "0" ]
-}
-
-@test "compute_needed_commits level 0 with existing returns CONFLICT" {
-    local thresholds="0
-1
-2
-3
-4"
-    local result
-    result=$(compute_needed_commits 0 3 "$thresholds")
-    [ "$result" = "CONFLICT" ]
-}
-
-@test "compute_needed_commits level 4 with no existing returns threshold" {
-    local thresholds="0
-1
-2
-3
-4"
-    local result
-    result=$(compute_needed_commits 4 0 "$thresholds")
-    [ "$result" -eq 4 ]
-}
-
-@test "compute_needed_commits level 4 with partial existing subtracts" {
-    local thresholds="0
-1
-2
-3
-4"
-    local result
-    result=$(compute_needed_commits 4 2 "$thresholds")
-    [ "$result" -eq 2 ]
-}
-
-@test "compute_needed_commits returns 0 when existing exceeds target" {
-    local thresholds="0
-1
-2
-3
-4"
-    local result
-    result=$(compute_needed_commits 2 5 "$thresholds")
+    result=$(get_max_contribution_count "[]")
     [ "$result" -eq 0 ]
+}
+
+@test "get_max_contribution_count with single entry" {
+    local result
+    result=$(get_max_contribution_count '[{"date": "2025-01-01", "contributionCount": 7}]')
+    [ "$result" -eq 7 ]
 }
