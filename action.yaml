@@ -10,11 +10,8 @@ inputs:
     description: "ASCII text to render on the contribution graph."
     required: true
   TOKEN:
-    description: "GitHub token. Defaults to GITHUB_TOKEN (contents:write + pull-requests:write)."
+    description: "GitHub token. Defaults to GITHUB_TOKEN (contents:write)."
     default: ""
-  REPO_NAME:
-    description: "Dedicated private repo name for painting commits."
-    default: "contribution-art"
   INTENSITY:
     description: "Fallback commit count when COMPENSATE is off. When on, auto-computed from your max."
     default: "4"
@@ -44,13 +41,12 @@ runs:
       env:
         INPUT_TEXT: ${{ inputs.TEXT }}
         INPUT_TOKEN: ${{ inputs.TOKEN || github.token }}
-        INPUT_REPO_NAME: ${{ inputs.REPO_NAME }}
         INPUT_INTENSITY: ${{ inputs.INTENSITY }}
         INPUT_INVERSE: ${{ inputs.INVERSE }}
         INPUT_START_DATE: ${{ inputs.START_DATE }}
         INPUT_COMPENSATE: ${{ inputs.COMPENSATE }}
         INPUT_DRY_RUN: ${{ inputs.DRY_RUN }}
-        INPUT_GITHUB_REPOSITORY: ${{ github.repository }}
+        INPUT_GITHUB_ACTOR: ${{ github.actor }}
         GH_TOKEN: ${{ inputs.TOKEN || github.token }}
       run: |
         chmod +x "${{ github.action_path }}/scripts/"*.sh
