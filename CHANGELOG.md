@@ -16,6 +16,16 @@ Types of changes:
 
 ## [Unreleased]
 
+### Added
+
+- Prominent disclaimer about unlimited backdating capability (tested back to 1970-01-04)
+- Proof-of-work SVG showing "HI" backdated to Aug 2024
+
+### Changed
+
+- Moved proof-of-work section below example in README
+- Contributions are removable by deleting `gh-pages` branch (noted in disclaimer)
+
 ---
 
 ## [2.0.0] - 2026-03-20
