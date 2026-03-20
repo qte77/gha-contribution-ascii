@@ -26,9 +26,6 @@ jobs:
         ( github.event.pull_request.merged == true &&
         github.event.pull_request.closed_by != 'github-actions' )
     runs-on: ubuntu-latest
-    outputs:
-      branch_new: ${{ steps.create_branch.outputs.branch_new }}
-      summary_data: ${{ steps.set_summary.outputs.summary_data }}
     permissions:
       actions: read
       checks: write
@@ -86,17 +83,4 @@ jobs:
           chmod +x "$src"
           $src "${{ github.repository }}" "${{ env.BRANCH_NEW }}" "${{ steps.bump.outputs.current-version }}"
 
-      - name: Set summary data
-        id: set_summary
-        if: ${{ always() }}
-        run: echo "summary_data=${GITHUB_STEP_SUMMARY}" >> $GITHUB_OUTPUT
-
-  generate_summary:
-    name: Generate Summary Report
-    if: ${{ always() }}
-    needs: bump_my_version
-    uses: ./.github/workflows/summarize-jobs-reusable.yaml
-    with:
-      branch_to_summarize: ${{ needs.bump_my_version.outputs.branch_new }}
-      summary_data: ${{ needs.bump_my_version.outputs.summary_data }}
 ...
