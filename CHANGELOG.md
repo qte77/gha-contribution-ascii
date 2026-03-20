@@ -16,6 +16,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [1.1.0] - 2026-03-20
+
 ### Added
 
 - CodeQL workflow (weekly schedule + push/PR triggers, autodiscovery)
