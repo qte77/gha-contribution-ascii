@@ -63,13 +63,21 @@ main() {
         echo "::warning::Text is ${BITMAP_WIDTH} columns wide but graph is 52 columns. Text will be truncated."
     fi
 
-    # Resolve username once (needed for compensation and repo setup)
-    local username=""
+    # Resolve username and email once (needed for compensation, repo setup, and commit attribution)
+    local username="" user_email=""
     if [[ -n "$token" ]]; then
         username=$(gh api user --jq '.login' 2>/dev/null) || {
             echo "::warning::Could not determine username."
             username=""
         }
+        # Reason: GitHub only counts contributions if commit email matches a verified account email
+        user_email=$(gh api user/emails --jq '[.[] | select(.verified)] | first | .email' 2>/dev/null) || {
+            echo "::warning::Could not determine user email. Falling back to noreply."
+            user_email=""
+        }
+        if [[ -z "$user_email" ]]; then
+            user_email="${username}@users.noreply.github.com"
+        fi
     fi
 
     # Step 3: Query existing contributions and compute target
@@ -163,7 +171,7 @@ main() {
 
     local work_dir
     work_dir=$(mktemp -d)
-    create_painting_repo "$work_dir"
+    create_painting_repo "$work_dir" "$username" "$user_email"
 
     # Step 6: Generate backdated commits
     echo ""
