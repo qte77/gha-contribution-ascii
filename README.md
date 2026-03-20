@@ -2,17 +2,17 @@
 
 ![Version](https://img.shields.io/badge/version-2.0.0-8A2BE2)
 
+> **DISCLAIMER**: This action creates commits with arbitrary `GIT_AUTHOR_DATE` timestamps.
+> There is **no technical limit** on how far back commits can be backdated — including
+> dates before Git (2005), before GitHub (2008), and even before Unix epoch (1970).
+> We have successfully written "FIRLEFANZ" to the contribution graph starting
+> **January 4, 1970**. Use responsibly. Contributions generated this way are
+> indistinguishable from real activity on the graph. To undo, delete the `gh-pages`
+> branch — contributions disappear within 24 hours.
+
 GitHub Action that writes ASCII text on your GitHub contribution graph using backdated commits. Works with the default `GITHUB_TOKEN` — no PAT required.
 
 For version history see the [CHANGELOG](CHANGELOG.md).
-
-## Proof of Work
-
-"HI" painted on the contribution graph starting August 4, 2024 (backdated from March 2026):
-
-![Contribution graph showing HI pattern from August 2024](docs/contribution-proof-2024.svg)
-
-Verified via GitHub GraphQL API — each green cell has 4+ backdated commits authored as `<user>@users.noreply.github.com`.
 
 ## Features
 
@@ -49,6 +49,14 @@ Default text `HI` rendered as a 7x11 bitmap (7 rows = days, 11 columns = weeks):
 █░░░█░░░█░░
 █░░░█░░███░
 ```
+
+### Proof of Work
+
+"HI" painted on the contribution graph starting August 4, 2024 (backdated from March 2026):
+
+![Contribution graph showing HI pattern from August 2024](docs/contribution-proof-2024.svg)
+
+Verified via GitHub GraphQL API — each green cell has 4+ backdated commits authored as `<user>@users.noreply.github.com`.
 
 ## Usage
 
