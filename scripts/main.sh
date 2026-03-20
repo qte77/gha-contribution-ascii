@@ -146,36 +146,41 @@ main() {
         return 0
     fi
 
-    # Step 5: Create/reset painting repo
+    # Step 5: Setup branch in current repo
     if [[ -z "$token" ]]; then
         echo "::error::TOKEN is required for non-dry-run mode"
         exit 1
     fi
 
-    echo ""
-    echo "--- Setting up painting repo ---"
-    if [[ -z "$username" ]]; then
-        echo "::error::Could not determine GitHub username. TOKEN may be invalid."
+    local repo_full="${INPUT_GITHUB_REPOSITORY:-}"
+    if [[ -z "$repo_full" ]]; then
+        echo "::error::GITHUB_REPOSITORY not set"
         exit 1
     fi
-    local repo_full="${username}/${repo_name}"
 
-    # Create private repo if it doesn't exist
-    if ! gh repo view "$repo_full" &>/dev/null; then
-        echo "Creating private repo: $repo_full"
-        gh repo create "$repo_full" --private --description "Contribution graph art (auto-generated)" || {
-            echo "::error::Failed to create repo $repo_full"
-            exit 1
-        }
-    fi
+    local branch_name="contribution-art/${start_date}"
+    echo ""
+    echo "--- Setting up branch ${branch_name} ---"
 
-    local work_dir
-    work_dir=$(mktemp -d)
-    create_painting_repo "$work_dir" "$username" "$user_email"
+    # Configure git identity
+    local commit_name="${username:-contribution-ascii}"
+    local commit_email="${user_email:-contribution-ascii@github.com}"
+    git config user.name "$commit_name"
+    git config user.email "$commit_email"
+
+    # Create orphan branch for clean history
+    git checkout --orphan "$branch_name"
+    git rm -rf . > /dev/null 2>&1 || true
+    echo "Contribution graph art - ${text} (${start_date})" > contributions.txt
+    git add contributions.txt
+    GIT_AUTHOR_DATE="2000-01-01T00:00:00" GIT_COMMITTER_DATE="2000-01-01T00:00:00" \
+        git commit -m "init" --quiet
 
     # Step 6: Generate backdated commits
     echo ""
     echo "--- Generating commits ---"
+    local work_dir
+    work_dir=$(pwd)
     while IFS= read -r line; do
         local pdate="${line%% *}" pcount="${line##* }"
         if [[ "$pcount" == "CONFLICT" || "$pcount" == "0" ]]; then
@@ -184,18 +189,21 @@ main() {
         generate_commits_for_date "$work_dir" "$pdate" "$pcount"
     done <<< "$plan"
 
-    # Step 7: Push
+    # Step 7: Push branch, wait for GitHub to register, then clean up
     echo ""
-    echo "--- Pushing to ${repo_full} ---"
-    cd "$work_dir"
-    git remote add origin "https://x-access-token:${token}@github.com/${repo_full}.git"
-    git push --force origin main
+    echo "--- Pushing branch ${branch_name} ---"
+    git push --force origin "$branch_name"
 
     echo ""
-    echo "Done! Contributions should appear on your graph within ~1 hour."
+    echo "Waiting 30s for GitHub to register contributions..."
+    sleep 30
 
-    # Cleanup
-    rm -rf "$work_dir"
+    echo "--- Cleaning up branch ${branch_name} ---"
+    git push origin --delete "$branch_name"
+
+    echo ""
+    echo "Done! ${total_commits} backdated commits pushed and branch cleaned up."
+    echo "Contributions should appear on your graph within ~1 hour."
 }
 
 # Run if executed directly (not sourced)

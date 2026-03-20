@@ -10,8 +10,8 @@ inputs:
     description: "ASCII text to render on the contribution graph."
     required: true
   TOKEN:
-    description: "PAT with repo, read:user, user:email scopes."
-    required: true
+    description: "GitHub token. Defaults to GITHUB_TOKEN (contents:write + pull-requests:write)."
+    default: ""
   REPO_NAME:
     description: "Dedicated private repo name for painting commits."
     default: "contribution-art"
@@ -33,18 +33,25 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout current repo
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        token: ${{ inputs.TOKEN || github.token }}
+
     - name: Render and paint contribution graph
       shell: bash
       env:
         INPUT_TEXT: ${{ inputs.TEXT }}
-        INPUT_TOKEN: ${{ inputs.TOKEN }}
+        INPUT_TOKEN: ${{ inputs.TOKEN || github.token }}
         INPUT_REPO_NAME: ${{ inputs.REPO_NAME }}
         INPUT_INTENSITY: ${{ inputs.INTENSITY }}
         INPUT_INVERSE: ${{ inputs.INVERSE }}
         INPUT_START_DATE: ${{ inputs.START_DATE }}
         INPUT_COMPENSATE: ${{ inputs.COMPENSATE }}
         INPUT_DRY_RUN: ${{ inputs.DRY_RUN }}
-        GH_TOKEN: ${{ inputs.TOKEN }}
+        INPUT_GITHUB_REPOSITORY: ${{ github.repository }}
+        GH_TOKEN: ${{ inputs.TOKEN || github.token }}
       run: |
         chmod +x "${{ github.action_path }}/scripts/"*.sh
         "${{ github.action_path }}/scripts/main.sh"

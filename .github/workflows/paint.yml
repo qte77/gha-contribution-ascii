@@ -21,7 +21,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   DEFAULT_TEXT: "HI"
@@ -33,7 +33,7 @@ jobs:
       - uses: qte77/gha-contribution-ascii@v1
         with:
           TEXT: ${{ inputs.text || env.DEFAULT_TEXT }}
-          TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           INVERSE: ${{ inputs.inverse || 'false' }}
