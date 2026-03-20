@@ -72,11 +72,21 @@ The graph shows **total contributions per day** across all repos. The action han
 
 **`INVERSE=true`**: Swaps text/background — text becomes gray, background becomes green. Since background only *adds* commits, existing contributions help rather than hurt. Use this for busy profiles.
 
+### Scheduled Repaint
+
+Add a daily cron to automatically maintain the art against new contributions:
+
+```yaml
+on:
+  schedule:
+    - cron: '0 6 * * *'  # daily at 06:00 UTC
+```
+
 **Tips**:
 
 - Run `DRY_RUN=true` first to preview conflicts
 - Use `INVERSE=true` if your graph already has many contributions
-- Re-run periodically if new activity degrades the art (force-pushes replace previous painting commits)
+- Schedule daily repaints to keep art intact despite new activity
 
 ## Limitations
 

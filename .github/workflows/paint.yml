@@ -1,5 +1,7 @@
 name: Paint Contribution Graph
 on:
+  # schedule:
+  #   - cron: '0 6 * * *'  # daily at 06:00 UTC — uncomment to enable
   workflow_dispatch:
     inputs:
       text:
@@ -15,6 +17,9 @@ on:
         type: boolean
         default: false
 
+env:
+  DEFAULT_TEXT: "HI"
+
 jobs:
   paint:
     runs-on: ubuntu-latest
@@ -22,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./
         with:
-          TEXT: ${{ inputs.text }}
+          TEXT: ${{ inputs.text || env.DEFAULT_TEXT }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
-          DRY_RUN: ${{ inputs.dry_run }}
-          INVERSE: ${{ inputs.inverse }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          INVERSE: ${{ inputs.inverse || 'false' }}
