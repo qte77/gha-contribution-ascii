@@ -16,6 +16,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.0.1] - 2026-03-20
+
 ### Added
 
 - Prominent disclaimer about unlimited backdating capability (tested back to 1970-01-04)
