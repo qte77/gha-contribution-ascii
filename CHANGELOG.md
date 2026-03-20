@@ -16,6 +16,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.0.0] - 2026-03-20
+
 ### Added
 
 - Push backdated commits to `gh-pages` branch (counts for contribution graph, no separate repo needed)
