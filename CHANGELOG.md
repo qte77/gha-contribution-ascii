@@ -16,6 +16,29 @@ Types of changes:
 
 ## [Unreleased]
 
+### Added
+
+- CodeQL workflow (weekly schedule + push/PR triggers, autodiscovery)
+- Dependabot config for `github-actions` ecosystem (weekly updates)
+- `start_date` workflow dispatch input for backdating contribution graph art
+- HI bitmap example in README
+
+### Changed
+
+- `START_DATE` now defaults to today (adjusted to Sunday) instead of 52 weeks ago
+- Commit author email resolved from authenticated user's verified GitHub email (was hardcoded `contribution-ascii@github.com`)
+- Bumped `actions/checkout` from v4 to v6
+- Bumped `callowayproject/bump-my-version` from 0.29.0 to 1.2.7
+
+### Fixed
+
+- Commits were not counted on contribution graph due to unrecognized author email
+- Missing `permissions` blocks in `paint.yml` and `test-action.yml` (CodeQL alerts)
+
+### Security
+
+- Added workflow permissions (`contents: read`) to restrict default token scope
+
 ---
 
 ## [1.0.0] - 2026-03-20
