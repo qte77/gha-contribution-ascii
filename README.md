@@ -14,6 +14,20 @@ For version history see the [CHANGELOG](CHANGELOG.md).
 - Inverse mode for profiles with heavy existing contributions
 - Dry-run mode for previewing without pushing
 
+## Example
+
+Default text `HI` rendered as a 7×11 bitmap (7 rows = days, 11 columns = weeks):
+
+```text
+█░░░█░░███░
+█░░░█░░░█░░
+█░░░█░░░█░░
+█████░░░█░░
+█░░░█░░░█░░
+█░░░█░░░█░░
+█░░░█░░███░
+```
+
 ## How It Works
 
 1. Renders text as a 7-row bitmap (7 rows = 7 days/week)
