@@ -1,6 +1,6 @@
 # Contribution Graph ASCII
 
-![Version](https://img.shields.io/badge/version-0.0.0-8A2BE2)
+![Version](https://img.shields.io/badge/version-1.0.0-8A2BE2)
 
 GitHub Action that writes ASCII text on your GitHub contribution graph (the green squares timeline on your profile).
 
