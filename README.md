@@ -1,6 +1,10 @@
 # Contribution Graph ASCII
 
+![Version](https://img.shields.io/badge/version-0.0.0-8A2BE2)
+
 GitHub Action that writes ASCII text on your GitHub contribution graph (the green squares timeline on your profile).
+
+For version history see the [CHANGELOG](CHANGELOG.md).
 
 ## Features
 
@@ -22,7 +26,7 @@ GitHub Action that writes ASCII text on your GitHub contribution graph (the gree
 ## Usage
 
 ```yaml
-- uses: qte77/gha-contribution-ascii@main
+- uses: qte77/gha-contribution-ascii@v1
   with:
     TEXT: "HELLO"
     TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
@@ -46,7 +50,7 @@ GitHub Action that writes ASCII text on your GitHub contribution graph (the gree
 Preview the bitmap and commit plan without pushing:
 
 ```yaml
-- uses: qte77/gha-contribution-ascii@main
+- uses: qte77/gha-contribution-ascii@v1
   with:
     TEXT: "HI"
     TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
