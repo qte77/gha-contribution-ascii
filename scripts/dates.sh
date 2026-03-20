@@ -24,16 +24,17 @@ get_start_date() {
             date -d "$input_date - $dow days" +%Y-%m-%d
         fi
     else
-        # Default: 52 weeks ago, adjusted to Sunday
+        # Default: today, adjusted to previous Sunday
         local today
         today=$(date +%Y-%m-%d)
         local dow
         dow=$(date -d "$today" +%u)
-        local days_back=$(( 52 * 7 ))
-        if [[ "$dow" -ne 7 ]]; then
-            days_back=$(( days_back + dow ))
+        # %u: Monday=1, Sunday=7
+        if [[ "$dow" -eq 7 ]]; then
+            echo "$today"
+        else
+            date -d "$today - $dow days" +%Y-%m-%d
         fi
-        date -d "$today - $days_back days" +%Y-%m-%d
     fi
 }
 
