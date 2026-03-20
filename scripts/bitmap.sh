@@ -34,27 +34,3 @@ text_to_bitmap() {
         r=$((r + 1))
     done < <(render_text "$text")
 }
-
-# get_bitmap_pixel: Get pixel value at (row, col).
-# Args: $1 = row (0-6), $2 = col (0-based)
-# Output: "0" or "1"
-get_bitmap_pixel() {
-    local row="${1}" col="${2}"
-    local line="${BITMAP_ROWS[$row]:-}"
-    echo "${line:$col:1}"
-}
-
-# bitmap_dimensions: Output "WIDTH HEIGHT" of current bitmap.
-bitmap_dimensions() {
-    echo "${BITMAP_WIDTH} ${BITMAP_HEIGHT}"
-}
-
-# invert_bitmap: Flip all 0s to 1s and vice versa in BITMAP_ROWS.
-invert_bitmap() {
-    local -a inverted=()
-    local row
-    for row in "${BITMAP_ROWS[@]}"; do
-        inverted+=("$(echo "$row" | tr '01' '10')")
-    done
-    BITMAP_ROWS=("${inverted[@]}")
-}
