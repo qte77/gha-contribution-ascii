@@ -15,12 +15,12 @@ source "${SCRIPT_DIR}/generate.sh"
 main() {
     local text="${INPUT_TEXT:-}"
     local token="${INPUT_TOKEN:-}"
-    local repo_name="${INPUT_REPO_NAME:-contribution-art}"
     local intensity="${INPUT_INTENSITY:-4}"
     local inverse="${INPUT_INVERSE:-false}"
     local start_date="${INPUT_START_DATE:-}"
     local compensate="${INPUT_COMPENSATE:-true}"
     local dry_run="${INPUT_DRY_RUN:-false}"
+    local github_actor="${INPUT_GITHUB_ACTOR:-}"
 
     if [[ -z "$text" ]]; then
         echo "::error::TEXT input is required"
@@ -63,27 +63,19 @@ main() {
         echo "::warning::Text is ${BITMAP_WIDTH} columns wide but graph is 52 columns. Text will be truncated."
     fi
 
-    # Resolve username and email once (needed for compensation, repo setup, and commit attribution)
-    local username="" user_email=""
-    if [[ -n "$token" ]]; then
-        username=$(gh api user --jq '.login' 2>/dev/null) || {
-            echo "::warning::Could not determine username."
-            username=""
-        }
-        # Reason: GitHub only counts contributions if commit email matches a verified account email
-        user_email=$(gh api user/emails --jq '[.[] | select(.verified)] | first | .email' 2>/dev/null) || {
-            echo "::warning::Could not determine user email. Falling back to noreply."
-            user_email=""
-        }
-        if [[ -z "$user_email" ]]; then
-            user_email="${username}@users.noreply.github.com"
-        fi
+    # Resolve identity from github.actor (no API call needed)
+    # Reason: GitHub counts contributions if commit email matches a verified account email.
+    # The noreply address is a verified alias for every GitHub account.
+    local username="${github_actor}"
+    local user_email="${github_actor}@users.noreply.github.com"
+    if [[ -n "$username" ]]; then
+        echo "Commit identity: $username <$user_email>"
     fi
 
     # Step 3: Query existing contributions and compute target
     local contributions_json="none"
     local target_count="$intensity"
-    if [[ "$compensate" == "true" && -n "$username" ]]; then
+    if [[ "$compensate" == "true" && -n "$username" && -n "$token" ]]; then
         echo ""
         echo "--- Querying existing contributions (full year) ---"
         local year_ago
@@ -146,30 +138,22 @@ main() {
         return 0
     fi
 
-    # Step 5: Setup branch in current repo
+    # Step 5: Setup gh-pages branch
+    # Reason: GitHub counts contributions on default branch and gh-pages only.
+    # gh-pages works with GITHUB_TOKEN (no PAT required) and doesn't pollute main.
     if [[ -z "$token" ]]; then
         echo "::error::TOKEN is required for non-dry-run mode"
         exit 1
     fi
 
-    local repo_full="${INPUT_GITHUB_REPOSITORY:-}"
-    if [[ -z "$repo_full" ]]; then
-        echo "::error::GITHUB_REPOSITORY not set"
-        exit 1
-    fi
-
-    local branch_name="contribution-art/${start_date}"
     echo ""
-    echo "--- Setting up branch ${branch_name} ---"
+    echo "--- Setting up gh-pages branch ---"
 
-    # Configure git identity
-    local commit_name="${username:-contribution-ascii}"
-    local commit_email="${user_email:-contribution-ascii@github.com}"
-    git config user.name "$commit_name"
-    git config user.email "$commit_email"
+    git config user.name "$username"
+    git config user.email "$user_email"
 
-    # Create orphan branch for clean history
-    git checkout --orphan "$branch_name"
+    # Create orphan gh-pages branch (clean history)
+    git checkout --orphan gh-pages
     git rm -rf . > /dev/null 2>&1 || true
     echo "Contribution graph art - ${text} (${start_date})" > contributions.txt
     git add contributions.txt
@@ -189,20 +173,13 @@ main() {
         generate_commits_for_date "$work_dir" "$pdate" "$pcount"
     done <<< "$plan"
 
-    # Step 7: Push branch, wait for GitHub to register, then clean up
+    # Step 7: Force-push gh-pages
     echo ""
-    echo "--- Pushing branch ${branch_name} ---"
-    git push --force origin "$branch_name"
+    echo "--- Pushing gh-pages ---"
+    git push --force origin gh-pages
 
     echo ""
-    echo "Waiting 30s for GitHub to register contributions..."
-    sleep 30
-
-    echo "--- Cleaning up branch ${branch_name} ---"
-    git push origin --delete "$branch_name"
-
-    echo ""
-    echo "Done! ${total_commits} backdated commits pushed and branch cleaned up."
+    echo "Done! ${total_commits} backdated commits on gh-pages as ${user_email}."
     echo "Contributions should appear on your graph within ~1 hour."
 }
 
