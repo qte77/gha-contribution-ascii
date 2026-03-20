@@ -10,9 +10,9 @@ source "${SCRIPT_DIR}/dates.sh"
 source "${SCRIPT_DIR}/contributions.sh"
 
 # create_painting_repo: Initialize or reset the dedicated painting repo.
-# Args: $1 = repo_path
+# Args: $1 = repo_path, $2 = username, $3 = email
 create_painting_repo() {
-    local repo_path="${1}"
+    local repo_path="${1}" username="${2}" email="${3}"
 
     if [[ -d "$repo_path" ]]; then
         rm -rf "$repo_path"
@@ -21,8 +21,8 @@ create_painting_repo() {
     mkdir -p "$repo_path"
     cd "$repo_path"
     git init -b main
-    git config user.name "contribution-ascii"
-    git config user.email "contribution-ascii@github.com"
+    git config user.name "$username"
+    git config user.email "$email"
 
     # Initial commit
     echo "Contribution graph art" > README.md
