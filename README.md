@@ -1,6 +1,6 @@
 # Contribution Graph ASCII
 
-![Version](https://img.shields.io/badge/version-1.1.0-8A2BE2)
+![Version](https://img.shields.io/badge/version-2.0.0-8A2BE2)
 
 GitHub Action that writes ASCII text on your GitHub contribution graph using backdated commits. Works with the default `GITHUB_TOKEN` — no PAT required.
 
