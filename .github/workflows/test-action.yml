@@ -1,32 +1,24 @@
-name: Paint Contribution Graph
+name: Test Action (Dry Run)
 on:
-  schedule:
-    - cron: '0 6 * * *'  # daily at 06:00 UTC
   workflow_dispatch:
     inputs:
       text:
         description: "Text to render"
         required: true
         default: "HI"
-      dry_run:
-        description: "Preview only (no push)"
-        type: boolean
-        default: false
       inverse:
         description: "Invert colors"
         type: boolean
         default: false
 
-env:
-  DEFAULT_TEXT: "HI"
-
 jobs:
-  paint:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: qte77/gha-contribution-ascii@v1
+      - uses: actions/checkout@v4
+      - uses: ./
         with:
-          TEXT: ${{ inputs.text || env.DEFAULT_TEXT }}
+          TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
-          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          DRY_RUN: "true"
           INVERSE: ${{ inputs.inverse || 'false' }}
