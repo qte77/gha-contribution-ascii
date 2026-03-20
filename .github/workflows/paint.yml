@@ -12,6 +12,9 @@ on:
         description: "Preview only (no push)"
         type: boolean
         default: false
+      start_date:
+        description: "Start date (YYYY-MM-DD), defaults to today"
+        required: false
       inverse:
         description: "Invert colors"
         type: boolean
@@ -28,5 +31,6 @@ jobs:
         with:
           TEXT: ${{ inputs.text || env.DEFAULT_TEXT }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
+          START_DATE: ${{ inputs.start_date }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           INVERSE: ${{ inputs.inverse || 'false' }}

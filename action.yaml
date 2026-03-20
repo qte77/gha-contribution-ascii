@@ -22,7 +22,7 @@ inputs:
     description: "Invert colors (dark=high intensity). Helps with existing contributions."
     default: "false"
   START_DATE:
-    description: "Start date for rendering (YYYY-MM-DD). Default: 52 weeks ago, adjusted to Sunday."
+    description: "Start date for rendering (YYYY-MM-DD). Default: today, adjusted to Sunday."
     default: ""
   COMPENSATE:
     description: "Query existing contributions and adjust commit counts."
