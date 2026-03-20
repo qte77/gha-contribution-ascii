@@ -20,6 +20,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 env:
   DEFAULT_TEXT: "HI"
 
