@@ -16,6 +16,26 @@ Types of changes:
 
 ## [Unreleased]
 
+### Added
+
+- Push backdated commits to `gh-pages` branch (counts for contribution graph, no separate repo needed)
+- Default `GITHUB_TOKEN` support — no PAT required for basic usage
+- Commit identity derived from `github.actor` noreply email (no `read:user` API call needed)
+- Proof-of-work SVG in `docs/` showing "HI" pattern backdated to Aug 2024
+- Comprehensive README rewrite with usage examples, token modes, and backdating docs
+
+### Changed
+
+- **BREAKING**: Commits now go to `gh-pages` branch instead of a separate `contribution-art` repo
+- **BREAKING**: `TOKEN` input is now optional (defaults to `GITHUB_TOKEN`)
+- **BREAKING**: Removed `REPO_NAME` input (no longer creates separate repos)
+- Identity resolution uses `github.actor` instead of `gh api user/emails`
+
+### Removed
+
+- `REPO_NAME` input and separate repo creation flow
+- `gh api user` and `gh api user/emails` API calls (replaced by `github.actor`)
+
 ---
 
 ## [1.1.0] - 2026-03-20
