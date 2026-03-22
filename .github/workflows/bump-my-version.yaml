@@ -50,6 +50,7 @@ jobs:
         with:
           args: ${{ inputs.bump_type }}
           branch: ${{ env.BRANCH_NEW }}
+          github-token: ${{ secrets.CONTRIBUTION_PAT }}
 
       - name: "Create PR '${{ env.BRANCH_NEW }}'"
         if: steps.bump.outputs.bumped == 'true'
