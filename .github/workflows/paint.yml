@@ -30,7 +30,7 @@ jobs:
   paint:
     runs-on: ubuntu-latest
     steps:
-      - uses: qte77/gha-contribution-ascii@v2
+      - uses: qte77/gha-contribution-ascii@v2.0.1
         with:
           TEXT: ${{ inputs.text || env.DEFAULT_TEXT }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}

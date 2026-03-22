@@ -32,6 +32,16 @@ search = "![Version](https://img.shields.io/badge/version-{current_version}-8A2B
 replace = "![Version](https://img.shields.io/badge/version-{new_version}-8A2BE2)"
 
 [[tool.bumpversion.files]]
+filename = ".github/workflows/paint.yml"
+search = "uses: qte77/gha-contribution-ascii@v{current_version}"
+replace = "uses: qte77/gha-contribution-ascii@v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = ".github/workflows/test-action.yml"
+search = "uses: qte77/gha-contribution-ascii@v{current_version}"
+replace = "uses: qte77/gha-contribution-ascii@v{new_version}"
+
+[[tool.bumpversion.files]]
 filename = "CHANGELOG.md"
 search = """
 ## [Unreleased]
