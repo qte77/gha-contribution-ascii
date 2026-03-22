@@ -7,41 +7,41 @@ setup() {
     source "${SCRIPT_DIR}/font.sh"
 }
 
-@test "render_char A produces 7 rows" {
+@test "render_text single char produces 7 rows" {
     local output
-    output=$(render_char "A")
+    output=$(render_text "A")
     local count
     count=$(echo "$output" | wc -l)
     [ "$count" -eq 7 ]
 }
 
-@test "render_char A first row is 01110" {
+@test "render_text A first row is 01110" {
     local output
-    output=$(render_char "A")
+    output=$(render_text "A")
     local first_row
     first_row=$(echo "$output" | head -1)
     [ "$first_row" = "01110" ]
 }
 
-@test "render_char A each row is 5 chars wide" {
+@test "render_text single char each row is 5 chars wide" {
     local output
-    output=$(render_char "A")
+    output=$(render_text "A")
     while IFS= read -r row; do
         [ "${#row}" -eq 5 ]
     done <<< "$output"
 }
 
-@test "render_char space produces all zeros" {
+@test "render_text space produces all zeros" {
     local output
-    output=$(render_char " ")
+    output=$(render_text " ")
     while IFS= read -r row; do
         [ "$row" = "00000" ]
     done <<< "$output"
 }
 
-@test "render_char unknown char renders as blank" {
+@test "render_text unknown char renders as blank" {
     local output
-    output=$(render_char "~")
+    output=$(render_text "~")
     while IFS= read -r row; do
         [ "$row" = "00000" ]
     done <<< "$output"
@@ -50,7 +50,7 @@ setup() {
 @test "all letters A-Z are defined and 7 rows each" {
     for letter in A B C D E F G H I J K L M N O P Q R S T U V W X Y Z; do
         local output
-        output=$(render_char "$letter")
+        output=$(render_text "$letter")
         local count
         count=$(echo "$output" | wc -l)
         [ "$count" -eq 7 ]
@@ -60,7 +60,7 @@ setup() {
 @test "all digits 0-9 are defined and 7 rows each" {
     for digit in 0 1 2 3 4 5 6 7 8 9; do
         local output
-        output=$(render_char "$digit")
+        output=$(render_text "$digit")
         local count
         count=$(echo "$output" | wc -l)
         [ "$count" -eq 7 ]
@@ -104,7 +104,7 @@ setup() {
     [ -z "$output" ]
 }
 
-@test "render_text single char width is 5" {
+@test "render_text single char X width is 5" {
     local output
     output=$(render_text "X")
     local first_row

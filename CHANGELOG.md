@@ -24,6 +24,7 @@ Types of changes:
 - Token validation moved to startup in `main.sh` — fails fast before rendering (KISS)
 - CodeQL workflow scans open PRs instead of only closed ones
 - `delete_branch_pr_tag.sh` now actually deletes the version tag on bump failure
+- `test-action.yml` split into two jobs: `test-local` (dry-run `./`) and `paint` (published tag)
 
 ### Removed
 
@@ -31,6 +32,7 @@ Types of changes:
 - Orphaned `summarize-jobs-reusable.yaml` (never called by any workflow)
 - Dead PR-merged condition from `bump-my-version.yaml` (only `workflow_dispatch` trigger exists)
 - `paint.yml` workflow (use `test-action.yml` for testing; consuming repos use the Marketplace action)
+- `render_char` from `font.sh` (test-only, never called by production code)
 
 ### Fixed
 
