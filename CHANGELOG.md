@@ -16,6 +16,28 @@ Types of changes:
 
 ## [Unreleased]
 
+### Changed
+
+- `generate_commit_plan` reads global `BITMAP_ROWS` directly instead of temp file (KISS)
+- `generate_commits_for_date` no longer takes `repo_path` param — operates in current directory (KISS)
+- `get_start_date` extracted `_adjust_to_sunday` helper to eliminate duplication (DRY)
+- Token validation moved to startup in `main.sh` — fails fast before rendering (KISS)
+- CodeQL workflow scans open PRs instead of only closed ones
+- `delete_branch_pr_tag.sh` now actually deletes the version tag on bump failure
+
+### Removed
+
+- Dead `create_painting_repo` function from `generate.sh` (vestigial v1 separate-repo flow)
+- Orphaned `summarize-jobs-reusable.yaml` (never called by any workflow)
+- Dead PR-merged condition from `bump-my-version.yaml` (only `workflow_dispatch` trigger exists)
+- `paint.yml` workflow (use `test-action.yml` for testing; consuming repos use the Marketplace action)
+
+### Fixed
+
+- README token modes table now matches actual behavior (compensation falls back, not disabled)
+- CHANGELOG v1.0.0 test count corrected (42, not 43)
+- Added `jq` and `gh` CLI to README prerequisites
+
 ---
 
 ## [2.0.1] - 2026-03-20
@@ -93,7 +115,7 @@ Types of changes:
 - Inverse mode for profiles with heavy existing contributions
 - Dry-run mode for previewing bitmap and commit plan without pushing
 - `paint.yml` workflow for self-testing via `workflow_dispatch`
-- 43 bats-core tests across 5 test files
+- 42 bats-core tests across 5 test files
 - `bump-my-version` release workflow
 
 ### Fixed
