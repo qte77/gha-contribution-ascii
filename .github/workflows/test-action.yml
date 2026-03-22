@@ -1,4 +1,4 @@
-name: Test Action (Dry Run)
+name: Test Action
 on:
   workflow_dispatch:
     inputs:
@@ -9,13 +9,17 @@ on:
       start_date:
         description: "Start date (YYYY-MM-DD), defaults to today"
         required: false
+      dry_run:
+        description: "Preview only (no push)"
+        type: boolean
+        default: true
       inverse:
         description: "Invert colors"
         type: boolean
         default: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -24,7 +28,7 @@ jobs:
       - uses: qte77/gha-contribution-ascii@v2.0.1
         with:
           TEXT: ${{ inputs.text }}
-          TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
+          TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
-          DRY_RUN: "true"
+          DRY_RUN: ${{ inputs.dry_run }}
           INVERSE: ${{ inputs.inverse || 'false' }}
