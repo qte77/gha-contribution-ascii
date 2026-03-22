@@ -10,13 +10,9 @@ setup() {
 
 @test "commit plan for single space produces all zero counts" {
     text_to_bitmap " "
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 4 "none" "false")
 
     # All pixels are 0 for space, so all counts should be 0
     while IFS= read -r line; do
@@ -27,13 +23,9 @@ setup() {
 
 @test "commit plan for I has non-zero counts" {
     text_to_bitmap "I"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 4 "none" "false")
 
     local has_nonzero=false
     while IFS= read -r line; do
@@ -48,13 +40,9 @@ setup() {
 
 @test "commit plan produces 7*width lines" {
     text_to_bitmap "A"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 4 "none" "false")
 
     local count
     count=$(echo "$plan" | wc -l)
@@ -63,9 +51,6 @@ setup() {
 
 @test "commit plan with compensation subtracts existing" {
     text_to_bitmap "I"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     # I col 2 is all ON. Col 2, row 0 = bitmap_pos_to_date(start, 0, 2) = start + 14 days
     # 2025-01-05 + 14 = 2025-01-19 (Sunday of week 3)
@@ -75,8 +60,7 @@ setup() {
     ]'
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 10 "$mock_contributions" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 10 "$mock_contributions" "false")
 
     local found
     found=$(echo "$plan" | grep "2025-01-19" | head -1)
@@ -86,9 +70,6 @@ setup() {
 
 @test "commit plan detects conflicts on gray pixels with existing contributions" {
     text_to_bitmap "I"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     # I row 0 = 01110: pixel at col 0 is OFF (gray)
     # Date for row 0, col 0 = 2025-01-05 (Sunday)
@@ -97,8 +78,7 @@ setup() {
     ]'
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 10 "$mock_contributions" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 10 "$mock_contributions" "false")
 
     local first_line
     first_line=$(echo "$plan" | head -1)
@@ -108,18 +88,14 @@ setup() {
 
 @test "commit plan inverse mode swaps pixel meaning" {
     text_to_bitmap " "
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     # Normal: space (all 0s) -> all gray -> count 0
     local plan_normal
-    plan_normal=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "false")
+    plan_normal=$(generate_commit_plan "2025-01-05" 4 "none" "false")
 
     # Inverse: space (all 0s) -> pixel OFF = green -> count > 0
     local plan_inverse
-    plan_inverse=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "true")
-    rm -f "$bitmap_file"
+    plan_inverse=$(generate_commit_plan "2025-01-05" 4 "none" "true")
 
     local normal_nonzero=false
     while IFS= read -r line; do
@@ -145,13 +121,9 @@ setup() {
 
 @test "commit plan dates are valid YYYY-MM-DD format" {
     text_to_bitmap "A"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 4 "none" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 4 "none" "false")
 
     while IFS= read -r line; do
         local pdate="${line%% *}"
@@ -161,14 +133,10 @@ setup() {
 
 @test "commit plan target count controls commit count" {
     text_to_bitmap "I"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local plan_low plan_high
-    plan_low=$(generate_commit_plan "$bitmap_file" "2025-01-05" 1 "none" "false")
-    plan_high=$(generate_commit_plan "$bitmap_file" "2025-01-05" 10 "none" "false")
-    rm -f "$bitmap_file"
+    plan_low=$(generate_commit_plan "2025-01-05" 1 "none" "false")
+    plan_high=$(generate_commit_plan "2025-01-05" 10 "none" "false")
 
     local sum_low=0 sum_high=0
     while IFS= read -r line; do
@@ -187,17 +155,13 @@ setup() {
 
 @test "commit plan with 0 existing uses full target" {
     text_to_bitmap "I"
-    local bitmap_file
-    bitmap_file=$(mktemp -p "${BATS_TMPDIR}")
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
 
     local mock_contributions='[
         {"date": "2025-01-06", "contributionCount": 0}
     ]'
 
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "2025-01-05" 5 "$mock_contributions" "false")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "2025-01-05" 5 "$mock_contributions" "false")
 
     # I col 2 is all ON. Col 2, row 0 = 2025-01-19 (start + 14 days)
     local found

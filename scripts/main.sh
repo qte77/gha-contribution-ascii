@@ -27,6 +27,11 @@ main() {
         exit 1
     fi
 
+    if [[ "$dry_run" != "true" && -z "$token" ]]; then
+        echo "::error::TOKEN is required for non-dry-run mode"
+        exit 1
+    fi
+
     echo "=== Contribution Graph ASCII Writer ==="
     echo "Text: $text"
     echo "Fallback intensity: $intensity"
@@ -99,13 +104,8 @@ main() {
     # Step 4: Generate commit plan
     echo ""
     echo "--- Commit plan ---"
-    local bitmap_file
-    bitmap_file=$(mktemp)
-    printf '%s\n' "${BITMAP_ROWS[@]}" > "$bitmap_file"
-
     local plan
-    plan=$(generate_commit_plan "$bitmap_file" "$start_date" "$target_count" "$contributions_json" "$inverse")
-    rm -f "$bitmap_file"
+    plan=$(generate_commit_plan "$start_date" "$target_count" "$contributions_json" "$inverse")
 
     # Count totals
     local total_commits=0 conflict_count=0
@@ -141,11 +141,6 @@ main() {
     # Step 5: Setup gh-pages branch
     # Reason: GitHub counts contributions on default branch and gh-pages only.
     # gh-pages works with GITHUB_TOKEN (no PAT required) and doesn't pollute main.
-    if [[ -z "$token" ]]; then
-        echo "::error::TOKEN is required for non-dry-run mode"
-        exit 1
-    fi
-
     echo ""
     echo "--- Setting up gh-pages branch ---"
 
@@ -165,14 +160,12 @@ main() {
     # Step 6: Generate backdated commits
     echo ""
     echo "--- Generating commits ---"
-    local work_dir
-    work_dir=$(pwd)
     while IFS= read -r line; do
         local pdate="${line%% *}" pcount="${line##* }"
         if [[ "$pcount" == "CONFLICT" || "$pcount" == "0" ]]; then
             continue
         fi
-        generate_commits_for_date "$work_dir" "$pdate" "$pcount"
+        generate_commits_for_date "$pdate" "$pcount"
     done <<< "$plan"
 
     # Step 7: Force-push gh-pages

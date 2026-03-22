@@ -142,7 +142,7 @@ Preview the bitmap and commit plan without pushing:
 
 | Token | Capabilities | Limitations |
 |---|---|---|
-| `GITHUB_TOKEN` (default) | Push commits, backdate | No compensation (can't query user contributions) |
+| `GITHUB_TOKEN` (default) | Push commits, backdate | Compensation attempted but falls back to `INTENSITY` (lacks `read:user` scope) |
 | PAT with `read:user` | Full compensation | Requires manual secret setup |
 
 ### Existing Contributions and Interference
@@ -173,6 +173,8 @@ The graph shows **total contributions per day** across all repos. The action han
 ### Prerequisites
 
 - [bats-core](https://github.com/bats-core/bats-core) for testing
+- `jq` for JSON processing (contributions compensation)
+- `gh` CLI for GitHub API queries
 
 ### Running Tests
 

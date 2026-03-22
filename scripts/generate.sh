@@ -9,40 +9,14 @@ source "${SCRIPT_DIR}/dates.sh"
 # shellcheck source=contributions.sh
 source "${SCRIPT_DIR}/contributions.sh"
 
-# create_painting_repo: Initialize or reset the dedicated painting repo.
-# Args: $1 = repo_path, $2 = username, $3 = email
-create_painting_repo() {
-    local repo_path="${1}" username="${2}" email="${3}"
-
-    if [[ -d "$repo_path" ]]; then
-        rm -rf "$repo_path"
-    fi
-
-    mkdir -p "$repo_path"
-    cd "$repo_path"
-    git init -b main
-    git config user.name "$username"
-    git config user.email "$email"
-
-    # Initial commit
-    echo "Contribution graph art" > README.md
-    git add README.md
-    local init_date
-    init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
-    GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
-        git commit -m "init" --allow-empty
-}
-
 # generate_commits_for_date: Create N commits backdated to a specific date.
-# Args: $1 = repo_path, $2 = date (YYYY-MM-DD), $3 = count
+# Args: $1 = date (YYYY-MM-DD), $2 = count
 generate_commits_for_date() {
-    local repo_path="${1}" target_date="${2}" count="${3}"
+    local target_date="${1}" count="${2}"
 
     if [[ "$count" -le 0 ]]; then
         return
     fi
-
-    cd "$repo_path"
 
     local i
     for ((i = 1; i <= count; i++)); do
@@ -56,25 +30,20 @@ generate_commits_for_date() {
 }
 
 # generate_commit_plan: Build a commit plan from bitmap + dates + compensation.
-# Args: $1 = bitmap_rows_file (7 lines), $2 = start_date, $3 = target_count,
-#        $4 = contributions_json (or "none"), $5 = inverse (true/false)
+# Reads: BITMAP_ROWS global array (set by text_to_bitmap)
+# Args: $1 = start_date, $2 = target_count,
+#        $3 = contributions_json (or "none"), $4 = inverse (true/false)
 # Output: Lines of "YYYY-MM-DD COUNT" (or "YYYY-MM-DD CONFLICT")
 generate_commit_plan() {
-    local bitmap_file="${1}" start_date="${2}" target_count="${3}"
-    local contributions_json="${4}" inverse="${5:-false}"
+    local start_date="${1}" target_count="${2}"
+    local contributions_json="${3}" inverse="${4:-false}"
 
-    # Read bitmap rows
-    local -a bitmap_rows=()
-    while IFS= read -r line; do
-        bitmap_rows+=("$line")
-    done < "$bitmap_file"
-
-    local width=${#bitmap_rows[0]}
+    local width=${#BITMAP_ROWS[0]}
 
     local col row
     for ((col = 0; col < width; col++)); do
         for ((row = 0; row < 7; row++)); do
-            local pixel="${bitmap_rows[$row]:$col:1}"
+            local pixel="${BITMAP_ROWS[$row]:$col:1}"
             local target_date
             target_date=$(bitmap_pos_to_date "$start_date" "$row" "$col")
 
