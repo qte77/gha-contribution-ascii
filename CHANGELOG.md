@@ -16,6 +16,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.0.2] - 2026-03-22
+
 ### Changed
 
 - `generate_commit_plan` reads global `BITMAP_ROWS` directly instead of temp file (KISS)
