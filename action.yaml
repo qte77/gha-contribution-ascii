@@ -7,8 +7,13 @@ branding:
   color: "green"
 inputs:
   TEXT:
-    description: "ASCII text to render on the contribution graph."
-    required: true
+    description: "ASCII text to render via built-in font. Ignored when BITMAP is set."
+    required: false
+    default: ""
+  BITMAP:
+    description: "Raw bitmap: 7 comma-separated rows of 0/1 (e.g. '01110,11111,01110'). Overrides TEXT."
+    required: false
+    default: ""
   TOKEN:
     description: "GitHub token. Defaults to GITHUB_TOKEN (contents:write)."
     default: ""
@@ -40,6 +45,7 @@ runs:
       shell: bash
       env:
         INPUT_TEXT: ${{ inputs.TEXT }}
+        INPUT_BITMAP: ${{ inputs.BITMAP }}
         INPUT_TOKEN: ${{ inputs.TOKEN || github.token }}
         INPUT_INTENSITY: ${{ inputs.INTENSITY }}
         INPUT_INVERSE: ${{ inputs.INVERSE }}

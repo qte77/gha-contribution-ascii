@@ -14,6 +14,7 @@ source "${SCRIPT_DIR}/generate.sh"
 
 main() {
     local text="${INPUT_TEXT:-}"
+    local bitmap="${INPUT_BITMAP:-}"
     local token="${INPUT_TOKEN:-}"
     local intensity="${INPUT_INTENSITY:-4}"
     local inverse="${INPUT_INVERSE:-false}"
@@ -22,8 +23,8 @@ main() {
     local dry_run="${INPUT_DRY_RUN:-false}"
     local github_actor="${INPUT_GITHUB_ACTOR:-}"
 
-    if [[ -z "$text" ]]; then
-        echo "::error::TEXT input is required"
+    if [[ -z "$text" && -z "$bitmap" ]]; then
+        echo "::error::Either TEXT or BITMAP input is required"
         exit 1
     fi
 
@@ -38,10 +39,14 @@ main() {
     echo "Inverse: $inverse"
     echo "Dry run: $dry_run"
 
-    # Step 1: Render text to bitmap
+    # Step 1: Render to bitmap (raw BITMAP input or TEXT via font)
     echo ""
     echo "--- Rendering bitmap ---"
-    text_to_bitmap "$text"
+    if [[ -n "$bitmap" ]]; then
+        parse_raw_bitmap "$bitmap"
+    else
+        text_to_bitmap "$text"
+    fi
     echo "Bitmap dimensions: ${BITMAP_WIDTH}w x ${BITMAP_HEIGHT}h"
 
     # Preview bitmap (swap display chars for inverse so user sees final appearance)
@@ -147,15 +152,28 @@ main() {
     git config user.name "$username"
     git config user.email "$user_email"
 
-    # Create orphan gh-pages branch (clean history)
-    git checkout --orphan gh-pages
-    git rm -rf . > /dev/null 2>&1 || true
-    echo "Contribution graph art - ${text} (${start_date})" > contributions.txt
-    git add contributions.txt
-    local init_date
-    init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
-    GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
-        git commit -m "init" --quiet
+    # Save current ref for post-step cleanup restoration
+    local original_ref
+    original_ref=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+
+    # Reuse existing gh-pages (append) or create orphan (first run)
+    local is_append=false
+    if git ls-remote --heads origin gh-pages 2>/dev/null | grep -q gh-pages; then
+        echo "Appending to existing gh-pages branch"
+        git fetch origin gh-pages
+        git checkout gh-pages
+        is_append=true
+    else
+        echo "Creating new orphan gh-pages branch"
+        git checkout --orphan gh-pages
+        git rm -rf . > /dev/null 2>&1 || true
+        echo "Contribution graph art" > contributions.txt
+        git add contributions.txt
+        local init_date
+        init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
+        GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
+            git commit -m "init" --quiet
+    fi
 
     # Step 6: Generate backdated commits
     echo ""
@@ -168,10 +186,17 @@ main() {
         generate_commits_for_date "$pdate" "$pcount"
     done <<< "$plan"
 
-    # Step 7: Force-push gh-pages
+    # Step 7: Push gh-pages (force for orphan, fast-forward for append)
     echo ""
     echo "--- Pushing gh-pages ---"
-    git push --force origin gh-pages
+    if [[ "$is_append" == "true" ]]; then
+        git push origin gh-pages
+    else
+        git push --force origin gh-pages
+    fi
+
+    # Restore original branch so actions/checkout post-step cleanup succeeds
+    git checkout "$original_ref" 2>/dev/null || true
 
     echo ""
     echo "Done! ${total_commits} backdated commits on gh-pages as ${user_email}."

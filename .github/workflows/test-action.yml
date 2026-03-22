@@ -3,9 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       text:
-        description: "Text to render"
-        required: true
+        description: "Text to render (ignored when bitmap is set)"
+        required: false
         default: "HI"
+      bitmap:
+        description: "Raw bitmap: 7 comma-separated rows of 0/1"
+        required: false
+        default: ""
       start_date:
         description: "Start date (YYYY-MM-DD), defaults to today"
         required: false
@@ -23,20 +27,21 @@ permissions:
 
 jobs:
   test-local:
-    name: Test local code (dry-run)
+    name: Test local code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./
         with:
           TEXT: ${{ inputs.text }}
+          BITMAP: ${{ inputs.bitmap }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
-          DRY_RUN: "true"
+          DRY_RUN: ${{ inputs.dry_run }}
           INVERSE: ${{ inputs.inverse || 'false' }}
 
   paint:
-    name: Paint (published action)
+    name: Paint (published action, dry-run only)
     runs-on: ubuntu-latest
     steps:
       - uses: qte77/gha-contribution-ascii@v2
@@ -44,5 +49,5 @@ jobs:
           TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: "true"
           INVERSE: ${{ inputs.inverse || 'false' }}
