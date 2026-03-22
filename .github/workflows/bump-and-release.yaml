@@ -76,7 +76,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh release create "$TAG" --repo "$REPO" --generate-notes
-          MAJOR="v${TAG%%.*}"
+          MAJOR="${TAG%%.*}"
           SHA=$(gh api "repos/$REPO/git/refs/tags/$TAG" --jq '.object.sha')
           gh api "repos/$REPO/git/refs/tags/$MAJOR" -X PATCH -f sha="$SHA" -F force=true 2>/dev/null \
             || gh api "repos/$REPO/git/refs" -f ref="refs/tags/$MAJOR" -f sha="$SHA"
