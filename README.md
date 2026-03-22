@@ -33,7 +33,7 @@ For version history see the [CHANGELOG](CHANGELOG.md).
 2. Maps each column to a week, each row to a day of the week
 3. Optionally queries existing contribution counts for compensation
 4. Creates backdated commits on an orphan `gh-pages` branch
-5. Force-pushes `gh-pages` — contributions appear on your graph within ~1 hour
+5. Pushes to `gh-pages` (force on first run, appends on subsequent) — contributions appear within ~1 hour
 
 GitHub counts contributions on the default branch and `gh-pages`. By using `gh-pages`, the art commits stay separate from your project history.
 

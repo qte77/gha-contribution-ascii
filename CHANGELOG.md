@@ -25,6 +25,12 @@ Types of changes:
 
 - `TEXT` input is now optional when `BITMAP` is provided
 - Multiple paintings coexist: appends to existing `gh-pages` instead of orphan-ing each run
+- `git push --force` only on first run (orphan); fast-forward push on append
+
+### Fixed
+
+- Post-step `action.yaml not found` error: restores original branch after push
+- Paint job in `test-action.yml` always dry-run (v2 lacks BITMAP/append support)
 
 ---
 

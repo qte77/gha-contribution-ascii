@@ -152,11 +152,17 @@ main() {
     git config user.name "$username"
     git config user.email "$user_email"
 
+    # Save current ref for post-step cleanup restoration
+    local original_ref
+    original_ref=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+
     # Reuse existing gh-pages (append) or create orphan (first run)
+    local is_append=false
     if git ls-remote --heads origin gh-pages 2>/dev/null | grep -q gh-pages; then
         echo "Appending to existing gh-pages branch"
         git fetch origin gh-pages
         git checkout gh-pages
+        is_append=true
     else
         echo "Creating new orphan gh-pages branch"
         git checkout --orphan gh-pages
@@ -180,10 +186,17 @@ main() {
         generate_commits_for_date "$pdate" "$pcount"
     done <<< "$plan"
 
-    # Step 7: Force-push gh-pages
+    # Step 7: Push gh-pages (force for orphan, fast-forward for append)
     echo ""
     echo "--- Pushing gh-pages ---"
-    git push --force origin gh-pages
+    if [[ "$is_append" == "true" ]]; then
+        git push origin gh-pages
+    else
+        git push --force origin gh-pages
+    fi
+
+    # Restore original branch so actions/checkout post-step cleanup succeeds
+    git checkout "$original_ref" 2>/dev/null || true
 
     echo ""
     echo "Done! ${total_commits} backdated commits on gh-pages as ${user_email}."
