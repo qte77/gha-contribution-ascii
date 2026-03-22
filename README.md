@@ -1,6 +1,6 @@
 # Contribution Graph ASCII
 
-![Version](https://img.shields.io/badge/version-2.0.3-8A2BE2)
+![Version](https://img.shields.io/badge/version-2.0.4-8A2BE2)
 
 > **DISCLAIMER**: This action creates commits with arbitrary `GIT_AUTHOR_DATE` timestamps.
 > There is **no technical limit** on how far back commits can be backdated — including
