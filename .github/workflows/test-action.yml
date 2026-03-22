@@ -6,6 +6,9 @@ on:
         description: "Text to render"
         required: true
         default: "HI"
+      start_date:
+        description: "Start date (YYYY-MM-DD), defaults to today"
+        required: false
       inverse:
         description: "Invert colors"
         type: boolean
@@ -23,5 +26,6 @@ jobs:
         with:
           TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT }}
+          START_DATE: ${{ inputs.start_date }}
           DRY_RUN: "true"
           INVERSE: ${{ inputs.inverse || 'false' }}
