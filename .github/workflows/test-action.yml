@@ -3,9 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       text:
-        description: "Text to render"
-        required: true
+        description: "Text to render (ignored when bitmap is set)"
+        required: false
         default: "HI"
+      bitmap:
+        description: "Raw bitmap: 7 comma-separated rows of 0/1"
+        required: false
+        default: ""
       start_date:
         description: "Start date (YYYY-MM-DD), defaults to today"
         required: false
@@ -30,6 +34,7 @@ jobs:
       - uses: ./
         with:
           TEXT: ${{ inputs.text }}
+          BITMAP: ${{ inputs.bitmap }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
           DRY_RUN: "true"
@@ -42,6 +47,7 @@ jobs:
       - uses: qte77/gha-contribution-ascii@v2
         with:
           TEXT: ${{ inputs.text }}
+          BITMAP: ${{ inputs.bitmap }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
           DRY_RUN: ${{ inputs.dry_run }}

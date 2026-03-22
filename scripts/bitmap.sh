@@ -15,6 +15,28 @@ declare -ga BITMAP_ROWS=()
 declare -g BITMAP_WIDTH=0
 declare -g BITMAP_HEIGHT=7
 
+# parse_raw_bitmap: Parse comma-separated rows of 0/1 into the global bitmap.
+# Args: $1 = "row0,row1,...,row6" (7 rows, each a string of 0s and 1s)
+# Sets: BITMAP_ROWS, BITMAP_WIDTH, BITMAP_HEIGHT
+parse_raw_bitmap() {
+    local input="${1:-}"
+    BITMAP_ROWS=()
+    BITMAP_WIDTH=0
+    BITMAP_HEIGHT=7
+
+    IFS=',' read -ra rows <<< "$input"
+    if [[ ${#rows[@]} -ne 7 ]]; then
+        echo "::error::BITMAP must have exactly 7 rows, got ${#rows[@]}"
+        exit 1
+    fi
+
+    local r
+    for r in "${rows[@]}"; do
+        BITMAP_ROWS+=("$r")
+    done
+    BITMAP_WIDTH=${#BITMAP_ROWS[0]}
+}
+
 text_to_bitmap() {
     local text="${1:-}"
     BITMAP_ROWS=()

@@ -19,6 +19,7 @@ For version history see the [CHANGELOG](CHANGELOG.md).
 - Pure bash composite action (no Docker, no Python runtime)
 - Works with default `GITHUB_TOKEN` (no PAT required)
 - 5x7 bitmap font: A-Z, 0-9, space, common punctuation
+- Raw `BITMAP` input for custom pixel art (Pacman, ghosts, logos, etc.)
 - Backdating support via `START_DATE` input
 - Pushes to `gh-pages` branch (counts for contribution graph without polluting `main`)
 - Uses `github.actor` noreply email for correct contribution attribution
@@ -28,7 +29,7 @@ For version history see the [CHANGELOG](CHANGELOG.md).
 
 ## How It Works
 
-1. Renders text as a 7-row bitmap (7 rows = 7 days/week)
+1. Renders text (or raw bitmap) as a 7-row bitmap (7 rows = 7 days/week)
 2. Maps each column to a week, each row to a day of the week
 3. Optionally queries existing contribution counts for compensation
 4. Creates backdated commits on an orphan `gh-pages` branch
@@ -83,6 +84,26 @@ No `TOKEN` input needed — the action uses the default `GITHUB_TOKEN` automatic
     START_DATE: "2024-08-04"
 ```
 
+### Custom pixel art with BITMAP
+
+```yaml
+# Pacman eating a cherry (10 cols × 7 rows)
+- uses: qte77/gha-contribution-ascii@v2
+  with:
+    BITMAP: "0111000001,1111100010,1111000100,1110011110,1111011110,1111101100,0111000000"
+    START_DATE: "2025-10-26"
+```
+
+```text
+░███░░░░░█
+█████░░░█░
+████░░░█░░
+███░░████░
+████░████░
+█████░██░░
+░███░░░░░░
+```
+
 ### Full workflow with schedule
 
 ```yaml
@@ -119,13 +140,16 @@ jobs:
 
 | Input | Default | Required | Description |
 |---|---|---|---|
-| `TEXT` | - | yes | ASCII text to render |
+| `TEXT` | - | no* | ASCII text to render (ignored when `BITMAP` is set) |
+| `BITMAP` | - | no* | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
 | `TOKEN` | `GITHUB_TOKEN` | no | GitHub token (default works, PAT for compensation) |
 | `INTENSITY` | `4` | no | Fallback commit count when `COMPENSATE` is off |
 | `INVERSE` | `false` | no | Invert colors (helps with existing contributions) |
 | `START_DATE` | today | no | Start date (YYYY-MM-DD), adjusted to Sunday |
 | `COMPENSATE` | `true` | no | Query existing contributions and adjust |
 | `DRY_RUN` | `false` | no | Preview without pushing |
+
+*Either `TEXT` or `BITMAP` is required.
 
 ### Dry Run
 

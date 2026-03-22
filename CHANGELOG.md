@@ -16,6 +16,15 @@ Types of changes:
 
 ## [Unreleased]
 
+### Added
+
+- `BITMAP` input for custom pixel art — 7 comma-separated rows of `0`/`1` (overrides `TEXT`)
+- Pacman + cherry example in README
+
+### Changed
+
+- `TEXT` input is now optional when `BITMAP` is provided
+
 ---
 
 ## [2.1.2] - 2026-03-22

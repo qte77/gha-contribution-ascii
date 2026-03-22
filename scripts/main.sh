@@ -14,6 +14,7 @@ source "${SCRIPT_DIR}/generate.sh"
 
 main() {
     local text="${INPUT_TEXT:-}"
+    local bitmap="${INPUT_BITMAP:-}"
     local token="${INPUT_TOKEN:-}"
     local intensity="${INPUT_INTENSITY:-4}"
     local inverse="${INPUT_INVERSE:-false}"
@@ -22,8 +23,8 @@ main() {
     local dry_run="${INPUT_DRY_RUN:-false}"
     local github_actor="${INPUT_GITHUB_ACTOR:-}"
 
-    if [[ -z "$text" ]]; then
-        echo "::error::TEXT input is required"
+    if [[ -z "$text" && -z "$bitmap" ]]; then
+        echo "::error::Either TEXT or BITMAP input is required"
         exit 1
     fi
 
@@ -38,10 +39,14 @@ main() {
     echo "Inverse: $inverse"
     echo "Dry run: $dry_run"
 
-    # Step 1: Render text to bitmap
+    # Step 1: Render to bitmap (raw BITMAP input or TEXT via font)
     echo ""
     echo "--- Rendering bitmap ---"
-    text_to_bitmap "$text"
+    if [[ -n "$bitmap" ]]; then
+        parse_raw_bitmap "$bitmap"
+    else
+        text_to_bitmap "$text"
+    fi
     echo "Bitmap dimensions: ${BITMAP_WIDTH}w x ${BITMAP_HEIGHT}h"
 
     # Preview bitmap (swap display chars for inverse so user sees final appearance)
