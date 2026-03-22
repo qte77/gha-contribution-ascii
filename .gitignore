@@ -4,3 +4,6 @@ config
 hooks
 objects
 refs
+
+# Claude Code
+.claude/

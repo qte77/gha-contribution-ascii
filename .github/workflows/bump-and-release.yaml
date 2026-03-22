@@ -78,6 +78,15 @@ jobs:
           REPO: ${{ github.repository }}
         run: gh release create "$TAG" --repo "$REPO" --generate-notes
 
+      - name: Update floating major tag
+        if: steps.bump.outputs.bumped == 'true'
+        env:
+          TAG: v${{ steps.bump.outputs.current-version }}
+        run: |
+          MAJOR="v${TAG%%.*}"
+          git tag -f "$MAJOR" "$TAG"
+          git push origin "$MAJOR" --force
+
       - name: Delete branch, PR and tag in case of failure or cancel
         if: failure() || cancelled()
         env:
