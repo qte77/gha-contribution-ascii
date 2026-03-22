@@ -61,8 +61,6 @@ jobs:
           pr_title="PR ${{ env.BRANCH_NEW }} ${{ env.SKIP_PR_HINT }}"
           pr_body="PR automatically created from \`${{ github.ref_name }}\` to bump from"
           pr_body="${pr_body} \`${tag_previous}\` to \`${tag_current}\` on \`${{ env.BRANCH_NEW }}\`."
-          pr_body="${pr_body} Tag \`${tag_current}\` will be created and has to be deleted manually"
-          pr_body="${pr_body} if PR gets closed without merge."
 
           gh pr create \
             --base "${{ github.ref_name }}" \
@@ -70,21 +68,14 @@ jobs:
             --title "${pr_title}" \
             --body "${pr_body}"
 
-      - name: Create GitHub Release
-        if: steps.bump.outputs.bumped == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: v${{ steps.bump.outputs.current-version }}
-          REPO: ${{ github.repository }}
-        run: gh release create "$TAG" --repo "$REPO" --generate-notes
-
-      - name: Update floating major tag
+      - name: Create release and update floating tag
         if: steps.bump.outputs.bumped == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: v${{ steps.bump.outputs.current-version }}
           REPO: ${{ github.repository }}
         run: |
+          gh release create "$TAG" --repo "$REPO" --generate-notes
           MAJOR="v${TAG%%.*}"
           SHA=$(gh api "repos/$REPO/git/refs/tags/$TAG" --jq '.object.sha')
           gh api "repos/$REPO/git/refs/tags/$MAJOR" -X PATCH -f sha="$SHA" -f force=true 2>/dev/null \
