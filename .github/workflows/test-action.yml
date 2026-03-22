@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   test-local:
-    name: Test local code (dry-run)
+    name: Test local code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -42,12 +42,12 @@ jobs:
 
   paint:
     name: Paint (published action)
+    if: inputs.bitmap == ''
     runs-on: ubuntu-latest
     steps:
       - uses: qte77/gha-contribution-ascii@v2
         with:
           TEXT: ${{ inputs.text }}
-          BITMAP: ${{ inputs.bitmap }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
           DRY_RUN: ${{ inputs.dry_run }}
