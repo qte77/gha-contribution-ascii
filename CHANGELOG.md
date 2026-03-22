@@ -24,6 +24,7 @@ Types of changes:
 ### Changed
 
 - `TEXT` input is now optional when `BITMAP` is provided
+- Multiple paintings coexist: appends to existing `gh-pages` instead of orphan-ing each run
 
 ---
 

@@ -152,15 +152,22 @@ main() {
     git config user.name "$username"
     git config user.email "$user_email"
 
-    # Create orphan gh-pages branch (clean history)
-    git checkout --orphan gh-pages
-    git rm -rf . > /dev/null 2>&1 || true
-    echo "Contribution graph art - ${text} (${start_date})" > contributions.txt
-    git add contributions.txt
-    local init_date
-    init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
-    GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
-        git commit -m "init" --quiet
+    # Reuse existing gh-pages (append) or create orphan (first run)
+    if git ls-remote --heads origin gh-pages 2>/dev/null | grep -q gh-pages; then
+        echo "Appending to existing gh-pages branch"
+        git fetch origin gh-pages
+        git checkout gh-pages
+    else
+        echo "Creating new orphan gh-pages branch"
+        git checkout --orphan gh-pages
+        git rm -rf . > /dev/null 2>&1 || true
+        echo "Contribution graph art" > contributions.txt
+        git add contributions.txt
+        local init_date
+        init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
+        GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
+            git commit -m "init" --quiet
+    fi
 
     # Step 6: Generate backdated commits
     echo ""
