@@ -81,11 +81,14 @@ jobs:
       - name: Update floating major tag
         if: steps.bump.outputs.bumped == 'true'
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: v${{ steps.bump.outputs.current-version }}
+          REPO: ${{ github.repository }}
         run: |
           MAJOR="v${TAG%%.*}"
-          git tag -f "$MAJOR" "$TAG"
-          git push origin "$MAJOR" --force
+          SHA=$(gh api "repos/$REPO/git/refs/tags/$TAG" --jq '.object.sha')
+          gh api "repos/$REPO/git/refs/tags/$MAJOR" -X PATCH -f sha="$SHA" -f force=true 2>/dev/null \
+            || gh api "repos/$REPO/git/refs" -f ref="refs/tags/$MAJOR" -f sha="$SHA"
 
       - name: Delete branch, PR and tag in case of failure or cancel
         if: failure() || cancelled()
