@@ -39,7 +39,7 @@ jobs:
     name: Paint (published action)
     runs-on: ubuntu-latest
     steps:
-      - uses: qte77/gha-contribution-ascii@v2.0.1
+      - uses: qte77/gha-contribution-ascii@v2
         with:
           TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
