@@ -10,7 +10,7 @@ on:
         description: "Start date (YYYY-MM-DD), defaults to today"
         required: false
       dry_run:
-        description: "Preview only (no push)"
+        description: "Dry run: preview bitmap and commit plan without pushing"
         type: boolean
         default: true
       inverse:
