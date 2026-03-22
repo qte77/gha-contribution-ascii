@@ -57,24 +57,6 @@ FONT[-]="00000 00000 00000 11111 00000 00000 00000"
 FONT[_]="00000 00000 00000 00000 00000 00000 11111"
 FONT[:]="00000 00000 00100 00000 00100 00000 00000"
 
-# render_char: Output 7 rows of a single character bitmap.
-# Args: $1 = character (single char, uppercase)
-# Output: 7 lines, each a string of 0s and 1s (5 chars wide)
-render_char() {
-    local char="${1:-}"
-    local data="${FONT[$char]:-}"
-
-    if [[ -z "$data" ]]; then
-        # Unknown character: render as blank
-        data="${FONT[" "]}"
-    fi
-
-    local row
-    for row in $data; do
-        echo "$row"
-    done
-}
-
 # render_text: Render a string as a 7-row bitmap matrix.
 # Args: $1 = text string (will be uppercased)
 # Output: 7 lines, each representing one row of the full bitmap.
