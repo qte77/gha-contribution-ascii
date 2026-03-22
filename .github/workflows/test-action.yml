@@ -41,8 +41,7 @@ jobs:
           INVERSE: ${{ inputs.inverse || 'false' }}
 
   paint:
-    name: Paint (published action)
-    if: inputs.bitmap == ''
+    name: Paint (published action, dry-run only)
     runs-on: ubuntu-latest
     steps:
       - uses: qte77/gha-contribution-ascii@v2
@@ -50,5 +49,5 @@ jobs:
           TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          DRY_RUN: "true"
           INVERSE: ${{ inputs.inverse || 'false' }}
