@@ -27,7 +27,9 @@ create_painting_repo() {
     # Initial commit
     echo "Contribution graph art" > README.md
     git add README.md
-    GIT_AUTHOR_DATE="2000-01-01T00:00:00" GIT_COMMITTER_DATE="2000-01-01T00:00:00" \
+    local init_date
+    init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
+    GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
         git commit -m "init" --allow-empty
 }
 

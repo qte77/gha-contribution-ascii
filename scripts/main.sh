@@ -157,7 +157,9 @@ main() {
     git rm -rf . > /dev/null 2>&1 || true
     echo "Contribution graph art - ${text} (${start_date})" > contributions.txt
     git add contributions.txt
-    GIT_AUTHOR_DATE="2000-01-01T00:00:00" GIT_COMMITTER_DATE="2000-01-01T00:00:00" \
+    local init_date
+    init_date="$(date -u +%Y-%m-%dT%H:%M:%S)"
+    GIT_AUTHOR_DATE="$init_date" GIT_COMMITTER_DATE="$init_date" \
         git commit -m "init" --quiet
 
     # Step 6: Generate backdated commits
