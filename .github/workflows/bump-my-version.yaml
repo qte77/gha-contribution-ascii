@@ -42,6 +42,8 @@ jobs:
           git checkout -b "${{ env.BRANCH_NEW }}"
           echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
 
+      # CONTRIBUTION_PAT (classic PAT with `workflow` scope) required
+      # because bumpversion modifies .github/workflows/test-action.yml
       - name: Bump version
         id: bump
         uses: callowayproject/bump-my-version@1.2.7
@@ -50,7 +52,7 @@ jobs:
         with:
           args: ${{ inputs.bump_type }}
           branch: ${{ env.BRANCH_NEW }}
-          github-token: ${{ secrets.CONTRIBUTION_PAT }}
+          github-token: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
 
       - name: "Create PR '${{ env.BRANCH_NEW }}'"
         if: steps.bump.outputs.bumped == 'true'
