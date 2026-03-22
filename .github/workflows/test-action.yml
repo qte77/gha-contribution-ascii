@@ -37,7 +37,7 @@ jobs:
           BITMAP: ${{ inputs.bitmap }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: ${{ inputs.start_date }}
-          DRY_RUN: "true"
+          DRY_RUN: ${{ inputs.dry_run }}
           INVERSE: ${{ inputs.inverse || 'false' }}
 
   paint:
