@@ -16,6 +16,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.2.0] - 2026-03-23
+
 ### Added
 
 - `BITMAP` input for custom pixel art — 7 comma-separated rows of `0`/`1` (overrides `TEXT`)
