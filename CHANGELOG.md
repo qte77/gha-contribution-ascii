@@ -16,6 +16,11 @@ Types of changes:
 
 ## [Unreleased]
 
+### Changed
+
+- Bump workflow creates signed commits via GitHub API (no external actions)
+- `bump-my-version` runs with `commit=false, tag=false` — files only
+
 ---
 
 ## [2.2.0] - 2026-03-23
