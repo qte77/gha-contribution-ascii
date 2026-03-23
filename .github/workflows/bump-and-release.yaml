@@ -34,24 +34,55 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set git cfg and create branch
-        id: create_branch
-        run: |
-          git config user.email "bumped@qte77.gha"
-          git config user.name "bump-my-version"
-          git checkout -b "${{ env.BRANCH_NEW }}"
-          echo "branch_new=${{ env.BRANCH_NEW }}" >> $GITHUB_OUTPUT
-
-      - name: Bump version
+      - name: Bump version (files only, no commit/tag)
         id: bump
         uses: callowayproject/bump-my-version@1.2.7
-        env:
-          BUMPVERSION_TAG: "true"
         with:
           args: ${{ inputs.bump_type }}
-          branch: ${{ env.BRANCH_NEW }}
 
-      - name: "Create PR '${{ env.BRANCH_NEW }}'"
+      - name: Create signed commit and push branch
+        if: steps.bump.outputs.bumped == 'true'
+        id: signed_commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ env.BRANCH_NEW }}
+          VERSION: ${{ steps.bump.outputs.current-version }}
+          PREV_VERSION: ${{ steps.bump.outputs.previous-version }}
+        run: |
+          # Collect changed files into a tree via GitHub API (produces signed commit)
+          BASE_SHA=$(gh api "repos/$REPO/git/ref/heads/${{ github.ref_name }}" --jq '.object.sha')
+          BASE_TREE=$(gh api "repos/$REPO/git/commits/$BASE_SHA" --jq '.tree.sha')
+
+          # Build tree entries from changed files
+          TREE_ENTRIES="[]"
+          for file in $(git diff --name-only); do
+            CONTENT=$(base64 -w0 "$file")
+            BLOB_SHA=$(gh api "repos/$REPO/git/blobs" -f content="$CONTENT" -f encoding=base64 --jq '.sha')
+            TREE_ENTRIES=$(echo "$TREE_ENTRIES" | jq --arg path "$file" --arg sha "$BLOB_SHA" \
+              '. + [{"path": $path, "mode": "100644", "type": "blob", "sha": $sha}]')
+          done
+
+          NEW_TREE=$(gh api "repos/$REPO/git/trees" \
+            --input <(jq -n --arg base "$BASE_TREE" --argjson tree "$TREE_ENTRIES" \
+              '{base_tree: $base, tree: $tree}') \
+            --jq '.sha')
+
+          COMMIT_SHA=$(gh api "repos/$REPO/git/commits" \
+            --input <(jq -n --arg msg "Bump version: $PREV_VERSION -> $VERSION" \
+              --arg tree "$NEW_TREE" --arg parent "$BASE_SHA" \
+              '{message: $msg, tree: $tree, parents: [$parent]}') \
+            --jq '.sha')
+
+          # Create branch pointing to signed commit
+          gh api "repos/$REPO/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$COMMIT_SHA"
+
+          # Create version tag
+          gh api "repos/$REPO/git/refs" -f ref="refs/tags/v$VERSION" -f sha="$COMMIT_SHA"
+
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+
+      - name: Create PR
         if: steps.bump.outputs.bumped == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
