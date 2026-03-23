@@ -74,10 +74,11 @@ jobs:
               '{message: $msg, tree: $tree, parents: [$parent]}') \
             --jq '.sha')
 
-          # Create branch pointing to signed commit
-          gh api "repos/$REPO/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$COMMIT_SHA"
+          # Create or update branch pointing to signed commit
+          gh api "repos/$REPO/git/refs/heads/$BRANCH" -X PATCH -f sha="$COMMIT_SHA" -F force=true 2>/dev/null \
+            || gh api "repos/$REPO/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$COMMIT_SHA"
 
-          # Create version tag
+          # Create version tag (fail-fast if poisoned)
           gh api "repos/$REPO/git/refs" -f ref="refs/tags/v$VERSION" -f sha="$COMMIT_SHA"
 
           echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
