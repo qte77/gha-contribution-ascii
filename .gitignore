@@ -5,5 +5,5 @@ hooks
 objects
 refs
 
-# Claude Code
-.claude/
+# Claude Code local (user-specific, not shared)
+.claude/settings.local.json
