@@ -162,34 +162,25 @@ Preview the bitmap and commit plan without pushing:
     DRY_RUN: "true"
 ```
 
-### Token Modes
+For token modes, interference handling, and multiple paintings see [Advanced Usage](docs/advanced-usage.md).
 
-| Token | Capabilities | Limitations |
-|---|---|---|
-| `GITHUB_TOKEN` (default) | Push commits, backdate | Compensation attempted but falls back to `INTENSITY` (lacks `read:user` scope) |
-| PAT with `read:user` | Full compensation | Requires manual secret setup |
+## Contribution Graph Behavior
 
-### Existing Contributions and Interference
+GitHub counts contributions from commits on the default branch and `gh-pages` ([docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile)). This action exploits that by creating commits with arbitrary `GIT_AUTHOR_DATE` — past (backdating) or future (forward-dating).
 
-The graph shows **total contributions per day** across all repos. The action handles this:
+**Observed platform behavior:**
 
-| Scenario | Result | Action |
-|---|---|---|
-| Art needs green, day is empty | Works perfectly | Adds target commits |
-| Art needs green, day has commits | Works, compensated | Subtracts existing from target |
-| Art needs gray, day has commits | **Conflict** | Logs warning, skips cell |
-| New contributions after painting | Art degrades | Re-run to repaint |
-
-**`COMPENSATE=true`** (default): Queries your full year of contributions, finds your max contribution day, and sets the target to max+1. Requires a PAT with `read:user` scope. With `GITHUB_TOKEN`, falls back to `INTENSITY` value.
-
-**`INVERSE=true`**: Swaps text/background — text becomes gray, background becomes green. Use this for busy profiles.
+- **Past-dated commits** on `gh-pages` are indexed quickly (minutes), consistent with normal contribution processing
+- **Future-dated commits** on `gh-pages` have unpredictable indexing — some appear, some don't. Indexing order appears to follow the git parent chain (HEAD backward), so commits appended last to the branch history get processed first
+- **Deleted `gh-pages` contributions persist** as ghost data — GitHub does not fully garbage-collect contributions from deleted branches. Counts accumulate across branch incarnations
+- **Multiple overlays** (same bitmap, repeated dispatches) increase commit count per cell → darker green. The graph uses [quartile-based coloring](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile) relative to your yearly max
+- **Cannot erase** existing contributions — days with real activity always show green regardless of the painting
 
 ## Limitations
 
 - Cannot make a day with existing contributions appear gray (fundamental GitHub limitation)
 - Text wider than 52 characters exceeds the visible graph window
-- Graph updates are cached by GitHub (~1 hour delay)
-- Each run force-pushes `gh-pages`, replacing previous art
+- Backdated commit indexing is asynchronous and not controllable via API
 - Compensation requires a PAT (default `GITHUB_TOKEN` lacks `read:user` scope)
 
 ## Development
