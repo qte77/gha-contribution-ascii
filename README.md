@@ -170,9 +170,9 @@ GitHub counts contributions from commits on the default branch and `gh-pages` ([
 
 **Observed platform behavior:**
 
-- **Past-dated commits** on `gh-pages` are indexed quickly (minutes), consistent with normal contribution processing
-- **Future-dated commits** on `gh-pages` have unpredictable indexing — some appear, some don't. Indexing order appears to follow the git parent chain (HEAD backward), so commits appended last to the branch history get processed first
-- **Deleted `gh-pages` contributions persist** as ghost data — GitHub does not fully garbage-collect contributions from deleted branches. Counts accumulate across branch incarnations
+- **Past-dated commits** index quickly (minutes), consistent with normal contribution processing
+- **Future-dated commits** index unpredictably — some date ranges appear instantly, others never do. Adjacent months on the same branch can behave differently (e.g., Oct-Nov indexes, Apr-Sep on the same painting doesn't). Deleting and recreating gh-pages with fresh commits does not unstick blocked date ranges.
+- **Ghost contributions persist** — deleting `gh-pages` does not garbage-collect previously indexed contributions. Counts accumulate across branch incarnations and never decrease.
 - **Multiple overlays** (same bitmap, repeated dispatches) increase commit count per cell → darker green. The graph uses [quartile-based coloring](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile) relative to your yearly max
 - **Cannot erase** existing contributions — days with real activity always show green regardless of the painting
 
