@@ -199,4 +199,4 @@ bats tests/
 
 ## License
 
-[BSD-3-Clause](LICENSE.md)
+[Apache-2.0](LICENSE.md)
