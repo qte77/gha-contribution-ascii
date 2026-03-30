@@ -1,7 +1,5 @@
 # Contribution Graph ASCII
 
-![Version](https://img.shields.io/badge/version-2.2.1-8A2BE2)
-
 > **DISCLAIMER**: This action creates commits with arbitrary `GIT_AUTHOR_DATE` timestamps.
 > There is **no technical limit** on how far back commits can be backdated — including
 > dates before Git (2005), before GitHub (2008), and even before Unix epoch (1970).
@@ -11,6 +9,12 @@
 > branch — contributions disappear within 24 hours.
 
 GitHub Action that writes ASCII text on your GitHub contribution graph using backdated commits. Works with the default `GITHUB_TOKEN` — no PAT required.
+
+![Version](https://img.shields.io/badge/version-2.2.1-8A2BE2)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
+[![test-action](https://github.com/qte77/gha-contribution-ascii/actions/workflows/test-action.yml/badge.svg)](https://github.com/qte77/gha-contribution-ascii/actions/workflows/test-action.yml)
+[![CodeQL](https://github.com/qte77/gha-contribution-ascii/actions/workflows/codeql.yaml/badge.svg)](https://github.com/qte77/gha-contribution-ascii/actions/workflows/codeql.yaml)
+[![Dependabot](https://github.com/qte77/gha-contribution-ascii/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/qte77/gha-contribution-ascii/actions/workflows/dependabot/dependabot-updates)
 
 For version history see the [CHANGELOG](CHANGELOG.md).
 
