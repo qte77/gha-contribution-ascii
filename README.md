@@ -1,6 +1,12 @@
-# Contribution Graph ASCII
+# gha-contribution-ascii
 
 ![Version](https://img.shields.io/badge/version-2.2.1-8A2BE2)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
+![Test Action](https://github.com/qte77/gha-contribution-ascii/actions/workflows/test-action.yml/badge.svg)
+![CodeFactor](https://www.codefactor.io/repository/github/qte77/gha-contribution-ascii/badge)
+![CodeQL](https://github.com/qte77/gha-contribution-ascii/actions/workflows/codeql.yaml/badge.svg)
+![Dependabot](https://img.shields.io/badge/dependabot-enabled-025e8c)
+![BATS](https://img.shields.io/badge/tests-BATS-blue)
 
 > **DISCLAIMER**: This action creates commits with arbitrary `GIT_AUTHOR_DATE` timestamps.
 > There is **no technical limit** on how far back commits can be backdated — including
@@ -138,16 +144,16 @@ jobs:
 
 ### Inputs
 
-| Input | Default | Required | Description |
+| Name | Required | Default | Description |
 |---|---|---|---|
-| `TEXT` | - | no* | ASCII text to render (ignored when `BITMAP` is set) |
-| `BITMAP` | - | no* | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
-| `TOKEN` | `GITHUB_TOKEN` | no | GitHub token (default works, PAT for compensation) |
-| `INTENSITY` | `4` | no | Fallback commit count when `COMPENSATE` is off |
-| `INVERSE` | `false` | no | Invert colors (helps with existing contributions) |
-| `START_DATE` | today | no | Start date (YYYY-MM-DD), adjusted to Sunday |
-| `COMPENSATE` | `true` | no | Query existing contributions and adjust |
-| `DRY_RUN` | `false` | no | Preview without pushing |
+| `TEXT` | no* | - | ASCII text to render (ignored when `BITMAP` is set) |
+| `BITMAP` | no* | - | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
+| `TOKEN` | no | `GITHUB_TOKEN` | GitHub token (default works, PAT for compensation) |
+| `INTENSITY` | no | `4` | Fallback commit count when `COMPENSATE` is off |
+| `INVERSE` | no | `false` | Invert colors (helps with existing contributions) |
+| `START_DATE` | no | today | Start date (YYYY-MM-DD), adjusted to Sunday |
+| `COMPENSATE` | no | `true` | Query existing contributions and adjust |
+| `DRY_RUN` | no | `false` | Preview without pushing |
 
 *Either `TEXT` or `BITMAP` is required.
 
