@@ -25,6 +25,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: gh-pages-paint
+  cancel-in-progress: false
+
 jobs:
   test-local:
     name: Test local code
