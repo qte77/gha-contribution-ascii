@@ -55,7 +55,7 @@ Default text `HI` rendered as a 7x11 bitmap (7 rows = days, 11 columns = weeks):
 █░░░█░░░█░░
 █░░░█░░░█░░
 █░░░█░░███░
-```
+```python
 
 ### Proof of Work
 
@@ -88,7 +88,7 @@ No `TOKEN` input needed — the action uses the default `GITHUB_TOKEN` automatic
   with:
     TEXT: "HI"
     START_DATE: "2024-08-04"
-```
+```python
 
 ### Custom pixel art with BITMAP
 
@@ -108,7 +108,7 @@ No `TOKEN` input needed — the action uses the default `GITHUB_TOKEN` automatic
 ████░████░
 █████░██░░
 ░███░░░░░░
-```
+```python
 
 ### Full workflow with schedule
 
@@ -166,7 +166,7 @@ Preview the bitmap and commit plan without pushing:
   with:
     TEXT: "HI"
     DRY_RUN: "true"
-```
+```bash
 
 For token modes, interference handling, and multiple paintings see [Advanced Usage](docs/advanced-usage.md).
 
@@ -174,7 +174,7 @@ For token modes, interference handling, and multiple paintings see [Advanced Usa
 
 GitHub counts contributions from commits on the default branch and `gh-pages` ([docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile)). This action exploits that by creating commits with arbitrary `GIT_AUTHOR_DATE` — past (backdating) or future (forward-dating).
 
-**Observed platform behavior:**
+### Observed platform behavior:
 
 - **Past-dated commits** index quickly (minutes), consistent with normal contribution processing
 - **Future-dated commits** index unpredictably — some date ranges appear instantly, others never do. Adjacent months on the same branch can behave differently (e.g., Oct-Nov indexes, Apr-Sep on the same painting doesn't). Deleting and recreating gh-pages with fresh commits does not unstick blocked date ranges.
