@@ -1,0 +1,37 @@
+name: Paint 2025 Graph
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: preview without pushing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  ghost:
+    name: Pacman ghost (Feb 16 - Mar 22)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./
+        with:
+          BITMAP: "01110,11111,10101,11111,11111,11111,10101"
+          TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
+          START_DATE: "2025-02-16"
+          DRY_RUN: ${{ inputs.dry_run }}
+
+  pacman:
+    name: Pacman + cherry (Oct 26 - Jan 3)
+    needs: ghost
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./
+        with:
+          BITMAP: "0111000001,1111100010,1111000100,1110011110,1111011110,1111101100,0111000000"
+          TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
+          START_DATE: "2025-10-26"
+          DRY_RUN: ${{ inputs.dry_run }}
