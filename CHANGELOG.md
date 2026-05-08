@@ -19,7 +19,10 @@ Types of changes:
 
 ---
 
-## [2.3.0] - 2026-05-08
+## [2.3.1] - 2026-05-08
+
+(`v2.3.0` was burned by failed `bump-and-release.yaml` runs interacting with
+release immutability — see issue #85. Released as `v2.3.1`.)
 
 ### Added
 

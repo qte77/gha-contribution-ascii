@@ -1,6 +1,6 @@
 # gha-contribution-ascii
 
-![Version](https://img.shields.io/badge/version-2.3.0-8A2BE2)
+![Version](https://img.shields.io/badge/version-2.3.1-8A2BE2)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Test Action](https://github.com/qte77/gha-contribution-ascii/actions/workflows/test-action.yml/badge.svg)
 ![CodeFactor](https://www.codefactor.io/repository/github/qte77/gha-contribution-ascii/badge)
