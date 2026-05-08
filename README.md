@@ -135,7 +135,7 @@ jobs:
 ### Inputs
 
 | Name | Required | Default | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `TEXT` | no* | - | ASCII text to render (ignored when `BITMAP` is set) |
 | `BITMAP` | no* | - | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
 | `TOKEN` | no | `GITHUB_TOKEN` | GitHub token (default works, PAT for compensation) |
