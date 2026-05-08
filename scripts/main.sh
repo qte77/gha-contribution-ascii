@@ -17,6 +17,7 @@ main() {
     local bitmap="${INPUT_BITMAP:-}"
     local token="${INPUT_TOKEN:-}"
     local intensity="${INPUT_INTENSITY:-4}"
+    local max_target="${INPUT_MAX_TARGET:-}"
     local inverse="${INPUT_INVERSE:-false}"
     local start_date="${INPUT_START_DATE:-}"
     local compensate="${INPUT_COMPENSATE:-true}"
@@ -110,11 +111,16 @@ main() {
         fi
 
         if [[ "$contributions_json" != "none" ]]; then
-            local max_count
+            local max_count raw_target
             max_count=$(get_max_contribution_count "$contributions_json")
             # Reason: exceed the user's max to guarantee darkest green (top quartile)
-            target_count=$((max_count + 1))
-            echo "Max existing contributions/day: $max_count -> target: $target_count"
+            raw_target=$((max_count + 1))
+            target_count=$(cap_target "$raw_target" "$max_target")
+            if [[ "$target_count" -lt "$raw_target" ]]; then
+                echo "Max: $max_count -> target capped at MAX_TARGET=$max_target (raw was $raw_target)"
+            else
+                echo "Max existing contributions/day: $max_count -> target: $target_count"
+            fi
         fi
     fi
 

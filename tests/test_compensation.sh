@@ -121,3 +121,33 @@ MOCK_CONTRIBUTIONS='[
     result=$(years_in_range "2024-12-31" "2026-01-01")
     [ "$(echo "$result" | wc -l)" -eq 3 ]
 }
+
+@test "cap_target returns target when cap is empty" {
+    local result
+    result=$(cap_target 27 "")
+    [ "$result" -eq 27 ]
+}
+
+@test "cap_target returns target when below cap" {
+    local result
+    result=$(cap_target 27 30)
+    [ "$result" -eq 27 ]
+}
+
+@test "cap_target returns cap when target exceeds cap" {
+    local result
+    result=$(cap_target 320 30)
+    [ "$result" -eq 30 ]
+}
+
+@test "cap_target returns target when equal to cap" {
+    local result
+    result=$(cap_target 30 30)
+    [ "$result" -eq 30 ]
+}
+
+@test "cap_target treats cap of 0 as disabled" {
+    local result
+    result=$(cap_target 27 0)
+    [ "$result" -eq 27 ]
+}

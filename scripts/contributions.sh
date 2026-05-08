@@ -80,3 +80,17 @@ years_in_range() {
         echo "$y"
     done
 }
+
+# cap_target: Apply MAX_TARGET ceiling to a computed target.
+# Reason: target = max+1 + append-only gh-pages produces an unbounded climb across
+# repeated dispatches. A cap stops the runaway without changing single-run semantics.
+# Args: $1 = target, $2 = cap (empty or 0 = disabled)
+# Output: capped target
+cap_target() {
+    local target="${1}" cap="${2:-}"
+    if [[ -n "$cap" && "$cap" -gt 0 && "$target" -gt "$cap" ]]; then
+        echo "$cap"
+    else
+        echo "$target"
+    fi
+}
