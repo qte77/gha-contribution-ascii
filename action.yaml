@@ -20,6 +20,9 @@ inputs:
   INTENSITY:
     description: "Fallback commit count when COMPENSATE is off. When on, auto-computed from your max."
     default: "4"
+  MAX_TARGET:
+    description: "Cap target_count to prevent runaway escalation across repeated dispatches. Empty/0 = uncapped."
+    default: ""
   INVERSE:
     description: "Invert colors (dark=high intensity). Helps with existing contributions."
     default: "false"
@@ -48,6 +51,7 @@ runs:
         INPUT_BITMAP: ${{ inputs.BITMAP }}
         INPUT_TOKEN: ${{ inputs.TOKEN || github.token }}
         INPUT_INTENSITY: ${{ inputs.INTENSITY }}
+        INPUT_MAX_TARGET: ${{ inputs.MAX_TARGET }}
         INPUT_INVERSE: ${{ inputs.INVERSE }}
         INPUT_START_DATE: ${{ inputs.START_DATE }}
         INPUT_COMPENSATE: ${{ inputs.COMPENSATE }}

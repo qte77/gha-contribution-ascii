@@ -22,26 +22,16 @@ For version history see the [CHANGELOG](CHANGELOG.md).
 
 ## Features
 
-- Pure bash composite action (no Docker, no Python runtime)
-- Works with default `GITHUB_TOKEN` (no PAT required)
-- 5x7 bitmap font: A-Z, 0-9, space, common punctuation
-- Raw `BITMAP` input for custom pixel art (Pacman, ghosts, logos, etc.)
-- Backdating support via `START_DATE` input
-- Pushes to `gh-pages` branch (counts for contribution graph without polluting `main`)
-- Uses `github.actor` noreply email for correct contribution attribution
-- Interference compensation: queries existing contributions and adjusts commit counts
-- Inverse mode for profiles with heavy existing contributions
-- Dry-run mode for previewing without pushing
+- Pure bash composite action — no Docker, no Python runtime
+- Works with the default `GITHUB_TOKEN` (PAT only needed for compensation)
+- 5×7 font (A–Z, 0–9, space, punctuation) or raw `BITMAP` for custom pixel art
+- Backdating via `START_DATE`; multi-year paints supported (compensation queries each spanned year)
+- Pushes to `gh-pages` so art stays out of `main`
+- Compensation, inverse, and dry-run modes built in
 
 ## How It Works
 
-1. Renders text (or raw bitmap) as a 7-row bitmap (7 rows = 7 days/week)
-2. Maps each column to a week, each row to a day of the week
-3. Optionally queries existing contribution counts for compensation
-4. Creates backdated commits on an orphan `gh-pages` branch
-5. Pushes to `gh-pages` (force on first run, appends on subsequent) — contributions appear within ~1 hour
-
-GitHub counts contributions on the default branch and `gh-pages`. By using `gh-pages`, the art commits stay separate from your project history.
+7 rows = days of the week, each column = one week. The action renders text or `BITMAP` to a 7-row matrix, optionally queries existing contributions for compensation, then creates backdated commits on `gh-pages` (force on first run, append after). Contributions index within ~1h.
 
 ## Example
 
@@ -150,6 +140,7 @@ jobs:
 | `BITMAP` | no* | - | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
 | `TOKEN` | no | `GITHUB_TOKEN` | GitHub token (default works, PAT for compensation) |
 | `INTENSITY` | no | `4` | Fallback commit count when `COMPENSATE` is off |
+| `MAX_TARGET` | no | `""` | Cap on `target_count` to prevent runaway escalation. Empty/0 = uncapped |
 | `INVERSE` | no | `false` | Invert colors (helps with existing contributions) |
 | `START_DATE` | no | today | Start date (YYYY-MM-DD), adjusted to Sunday |
 | `COMPENSATE` | no | `true` | Query existing contributions and adjust |
@@ -170,24 +161,15 @@ Preview the bitmap and commit plan without pushing:
 
 For token modes, interference handling, and multiple paintings see [Advanced Usage](docs/advanced-usage.md).
 
-## Contribution Graph Behavior
-
-GitHub counts contributions from commits on the default branch and `gh-pages` ([docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile)). This action exploits that by creating commits with arbitrary `GIT_AUTHOR_DATE` — past (backdating) or future (forward-dating).
-
-**Observed platform behavior:**
-
-- **Past-dated commits** index quickly (minutes), consistent with normal contribution processing
-- **Future-dated commits** index unpredictably — some date ranges appear instantly, others never do. Adjacent months on the same branch can behave differently (e.g., Oct-Nov indexes, Apr-Sep on the same painting doesn't). Deleting and recreating gh-pages with fresh commits does not unstick blocked date ranges.
-- **Ghost contributions persist** — deleting `gh-pages` does not garbage-collect previously indexed contributions. Counts accumulate across branch incarnations and never decrease.
-- **Multiple overlays** (same bitmap, repeated dispatches) increase commit count per cell → darker green. The graph uses [quartile-based coloring](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile) relative to your yearly max
-- **Cannot erase** existing contributions — days with real activity always show green regardless of the painting
-
 ## Limitations
 
-- Cannot make a day with existing contributions appear gray (fundamental GitHub limitation)
-- Text wider than 52 characters exceeds the visible graph window
-- Backdated commit indexing is asynchronous and not controllable via API
-- Compensation requires a PAT (default `GITHUB_TOKEN` lacks `read:user` scope)
+- Existing real contributions can't be hidden — days with activity always render green
+- Future-dated commits index unpredictably (past dates are reliable)
+- Ghost contributions persist after deleting `gh-pages` — counts only ever go up
+- Bitmap wider than 52 columns exceeds the visible graph window
+- Compensation needs a PAT (default `GITHUB_TOKEN` lacks `read:user` scope)
+
+See [Advanced Usage](docs/advanced-usage.md) for indexing quirks, multi-overlay behavior, and quartile coloring details.
 
 ## Development
 

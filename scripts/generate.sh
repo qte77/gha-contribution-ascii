@@ -20,8 +20,9 @@ generate_commits_for_date() {
 
     local i
     for ((i = 1; i <= count; i++)); do
-        # Vary the timestamp slightly to avoid dedup
-        local ts="${target_date}T12:$(printf '%02d' $((i % 60))):$(printf '%02d' $((i / 60 % 60)))"
+        # Vary the timestamp slightly to avoid dedup. Pin +00:00 so the commit's
+        # graph-bucket day is unambiguous and doesn't depend on the runner's local TZ.
+        local ts="${target_date}T12:$(printf '%02d' $((i % 60))):$(printf '%02d' $((i / 60 % 60)))+00:00"
         echo "${target_date}-${i}" >> contributions.txt
         git add contributions.txt
         GIT_AUTHOR_DATE="$ts" GIT_COMMITTER_DATE="$ts" \

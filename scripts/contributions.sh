@@ -55,3 +55,42 @@ get_contribution_count() {
 get_max_contribution_count() {
     echo "${1}" | jq '[.[].contributionCount] | max // 0'
 }
+
+# merge_contribution_jsons: Concatenate any number of contribution JSON arrays.
+# Reason: a paint can span multiple calendar years; GraphQL caps each query at 1 year,
+# so we query per year then merge for downstream lookup and max computation.
+# Args: any number of JSON array strings
+# Output: single JSON array
+merge_contribution_jsons() {
+    if [[ $# -eq 0 ]]; then
+        echo "[]"
+        return
+    fi
+    printf '%s\n' "$@" | jq -s 'add // []'
+}
+
+# years_in_range: List the calendar years (one per line) spanned by [start_date, end_date].
+# Args: $1 = start_date (YYYY-MM-DD), $2 = end_date (YYYY-MM-DD)
+# Output: years one per line, ascending
+years_in_range() {
+    local start_year end_year y
+    start_year=$(date -d "${1}" +%Y) || return 1
+    end_year=$(date -d "${2}" +%Y) || return 1
+    for ((y = start_year; y <= end_year; y++)); do
+        echo "$y"
+    done
+}
+
+# cap_target: Apply MAX_TARGET ceiling to a computed target.
+# Reason: target = max+1 + append-only gh-pages produces an unbounded climb across
+# repeated dispatches. A cap stops the runaway without changing single-run semantics.
+# Args: $1 = target, $2 = cap (empty or 0 = disabled)
+# Output: capped target
+cap_target() {
+    local target="${1}" cap="${2:-}"
+    if [[ -n "$cap" && "$cap" -gt 0 && "$target" -gt "$cap" ]]; then
+        echo "$cap"
+    else
+        echo "$target"
+    fi
+}
