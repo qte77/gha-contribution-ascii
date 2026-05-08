@@ -27,3 +27,10 @@ The graph shows **total contributions per day** across all repos. The action han
 The action supports appending: the first run creates an orphan `gh-pages`, subsequent runs append commits. This allows multiple paintings at different date ranges to coexist. Each overlay increases commits per cell, producing darker green (quartile-based coloring).
 
 To clear all paintings, delete the `gh-pages` branch and repaint from scratch.
+
+## Platform Quirks
+
+- **Past-dated commits** index quickly (minutes).
+- **Future-dated commits** index unpredictably — some ranges appear instantly, others never. Recreating `gh-pages` does not unstick blocked ranges.
+- **Ghost contributions persist** — deleting `gh-pages` does not GC previously indexed contributions; counts only accumulate.
+- **Quartile coloring** is per-year and relative to your yearly max ([GitHub docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile)). Multi-year paints query each spanned year so target beats every year's max.
