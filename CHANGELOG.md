@@ -17,6 +17,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.3.0] - 2026-05-08
+
 ### Added
 
 - `MAX_TARGET` input caps `target_count` to prevent runaway escalation across
@@ -36,6 +40,8 @@ Types of changes:
 - Removed inaccurate "ghost contributions persist after `gh-pages` deletion"
   claim from advanced docs (contradicted the README DISCLAIMER, which is correct:
   deleting `gh-pages` clears the graph contributions within ~24h).
+- Markdown lint fixes (MD024 disable, MD060 separator pad) and replaced 301-redirected GitHub docs link.
+- `lint-md-links` workflow grants `issues: write` for the reusable `notify` job.
 
 ---
 
