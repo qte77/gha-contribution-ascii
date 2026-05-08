@@ -86,16 +86,28 @@ main() {
     local contributions_json="none"
     local target_count="$intensity"
     if [[ "$compensate" == "true" && -n "$username" && -n "$token" ]]; then
+        # Reason: query each calendar year the painting spans. GraphQL caps a single query
+        # at 1 year, so multi-year paints (e.g. Oct-Jan) need one query per year. Target uses
+        # the max across all spanned years so painted cells beat the top quartile in each.
+        local end_date
+        end_date=$(date -d "$start_date + $((BITMAP_WIDTH * 7 - 1)) days" +%Y-%m-%d)
         echo ""
-        echo "--- Querying existing contributions (full year) ---"
-        local year_ago
-        year_ago=$(date -d "$start_date - 365 days" +%Y-%m-%d 2>/dev/null || date -d "365 days ago" +%Y-%m-%d)
-        local today
-        today=$(date +%Y-%m-%d)
-        contributions_json=$(query_contributions "$token" "$username" "$year_ago" "$today") || {
+        echo "--- Querying existing contributions ($start_date to $end_date) ---"
+        local merged="[]" part y query_failed=false
+        for y in $(years_in_range "$start_date" "$end_date"); do
+            if part=$(query_contributions "$token" "$username" "${y}-01-01" "${y}-12-31"); then
+                merged=$(merge_contribution_jsons "$merged" "$part")
+            else
+                query_failed=true
+                break
+            fi
+        done
+        if [[ "$query_failed" == "true" ]]; then
             echo "::warning::Could not query contributions. Using fallback intensity=$intensity."
             contributions_json="none"
-        }
+        else
+            contributions_json="$merged"
+        fi
 
         if [[ "$contributions_json" != "none" ]]; then
             local max_count
