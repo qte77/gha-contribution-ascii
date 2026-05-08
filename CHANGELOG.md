@@ -16,6 +16,12 @@ Types of changes:
 
 ## [Unreleased]
 
+### Added
+
+- `MAX_TARGET` input caps `target_count` to prevent runaway escalation across
+  repeated dispatches (`target = max + 1` + append-only `gh-pages` is otherwise
+  unbounded). Empty or `0` keeps the legacy uncapped behavior.
+
 ### Fixed
 
 - `COMPENSATE` now queries each calendar year a paint spans and merges results.
@@ -23,6 +29,12 @@ Types of changes:
   1-year GraphQL window for backdated paints and falling back to `INTENSITY`.
 - Painted commits pin `GIT_AUTHOR_DATE` to `+00:00` so the graph-bucket day no
   longer depends on the runner's local timezone.
+
+### Docs
+
+- Removed inaccurate "ghost contributions persist after `gh-pages` deletion"
+  claim from advanced docs (contradicted the README DISCLAIMER, which is correct:
+  deleting `gh-pages` clears the graph contributions within ~24h).
 
 ---
 

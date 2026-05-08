@@ -32,5 +32,18 @@ To clear all paintings, delete the `gh-pages` branch and repaint from scratch.
 
 - **Past-dated commits** index quickly (minutes).
 - **Future-dated commits** index unpredictably — some ranges appear instantly, others never. Recreating `gh-pages` does not unstick blocked ranges.
-- **Ghost contributions persist** — deleting `gh-pages` does not GC previously indexed contributions; counts only accumulate.
+- **Deleting `gh-pages` removes the contributions from the graph** (within ~24h, per the project DISCLAIMER). Useful for resetting after runaway escalation.
 - **Quartile coloring** is per-year and relative to your yearly max ([GitHub docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile)). Multi-year paints query each spanned year so target beats every year's max.
+
+## Capping target with MAX_TARGET
+
+Without a cap, `target = max + 1` plus append-only `gh-pages` causes target to climb by 1 every dispatch — past runs become the new ceiling. Set `MAX_TARGET` to bound it:
+
+```yaml
+- uses: qte77/gha-contribution-ascii@v2
+  with:
+    BITMAP: "..."
+    MAX_TARGET: "30"   # target will not exceed 30 even if max+1 is higher
+```
+
+Empty or `0` keeps the legacy uncapped behavior.

@@ -140,6 +140,7 @@ jobs:
 | `BITMAP` | no* | - | Raw bitmap: 7 comma-separated rows of `0`/`1`. Overrides `TEXT` |
 | `TOKEN` | no | `GITHUB_TOKEN` | GitHub token (default works, PAT for compensation) |
 | `INTENSITY` | no | `4` | Fallback commit count when `COMPENSATE` is off |
+| `MAX_TARGET` | no | `""` | Cap on `target_count` to prevent runaway escalation. Empty/0 = uncapped |
 | `INVERSE` | no | `false` | Invert colors (helps with existing contributions) |
 | `START_DATE` | no | today | Start date (YYYY-MM-DD), adjusted to Sunday |
 | `COMPENSATE` | no | `true` | Query existing contributions and adjust |
