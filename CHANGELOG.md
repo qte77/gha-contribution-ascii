@@ -17,9 +17,19 @@ Types of changes:
 
 ## [Unreleased]
 
+### Fixed
+
+- `bump-and-release.yaml` cleanup no longer deletes the version tag/release on
+  failure. Combined with "Enable release immutability", the previous behavior
+  permanently burned tag names on every failed dispatch — `v2.3.0` itself
+  became unreachable. See #85, #89.
+
 ---
 
-## [2.3.0] - 2026-05-08
+## [2.3.1] - 2026-05-08
+
+(`v2.3.0` was burned by failed `bump-and-release.yaml` runs interacting with
+release immutability — see issue #85. Released as `v2.3.1`.)
 
 ### Added
 
