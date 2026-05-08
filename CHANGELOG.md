@@ -16,6 +16,14 @@ Types of changes:
 
 ## [Unreleased]
 
+### Fixed
+
+- `COMPENSATE` now queries each calendar year a paint spans and merges results.
+  Previous logic queried `start_date - 365d` → today, silently exceeding GitHub's
+  1-year GraphQL window for backdated paints and falling back to `INTENSITY`.
+- Painted commits pin `GIT_AUTHOR_DATE` to `+00:00` so the graph-bucket day no
+  longer depends on the runner's local timezone.
+
 ---
 
 ## [2.2.1] - 2026-03-23
