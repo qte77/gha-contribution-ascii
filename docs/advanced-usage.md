@@ -3,7 +3,7 @@
 ## Token Modes
 
 | Token | Capabilities | Limitations |
-|---|---|---|
+| --- | --- | --- |
 | `GITHUB_TOKEN` (default) | Push commits, backdate | Compensation attempted but falls back to `INTENSITY` (lacks `read:user` scope) |
 | PAT with `read:user` | Full compensation | Requires manual secret setup |
 
@@ -12,7 +12,7 @@
 The graph shows **total contributions per day** across all repos. The action handles this:
 
 | Scenario | Result | Action |
-|---|---|---|
+| --- | --- | --- |
 | Art needs green, day is empty | Works perfectly | Adds target commits |
 | Art needs green, day has commits | Works, compensated | Subtracts existing from target |
 | Art needs gray, day has commits | **Conflict** | Logs warning, skips cell |
@@ -33,7 +33,7 @@ To clear all paintings, delete the `gh-pages` branch and repaint from scratch.
 - **Past-dated commits** index quickly (minutes).
 - **Future-dated commits** index unpredictably — some ranges appear instantly, others never. Recreating `gh-pages` does not unstick blocked ranges.
 - **Deleting `gh-pages` removes the contributions from the graph** (within ~24h, per the project DISCLAIMER). Useful for resetting after runaway escalation.
-- **Quartile coloring** is per-year and relative to your yearly max ([GitHub docs](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/viewing-contributions-on-your-profile)). Multi-year paints query each spanned year so target beats every year's max.
+- **Quartile coloring** is per-year and relative to your yearly max ([GitHub docs](https://docs.github.com/en/account-and-profile/how-tos/contribution-settings/viewing-contributions-on-your-profile)). Multi-year paints query each spanned year so target beats every year's max.
 
 ## Capping target with MAX_TARGET
 
