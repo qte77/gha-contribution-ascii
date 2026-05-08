@@ -21,6 +21,7 @@ jobs:
           BITMAP: "01110,11111,10101,11111,11111,11111,10101"
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: "2025-02-16"
+          MAX_TARGET: "30"
           DRY_RUN: ${{ inputs.dry_run }}
 
   galaxy:
@@ -34,6 +35,7 @@ jobs:
           BITMAP: "11011000010,01110001110,11111011111,10101011111,01110011011,01010011111,10001001110"
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: "2025-03-30"
+          MAX_TARGET: "30"
           DRY_RUN: ${{ inputs.dry_run }}
 
   pacman:
@@ -47,4 +49,5 @@ jobs:
           BITMAP: "0111000001,1111100010,1111000100,1110011110,1111011110,1111101100,0111000000"
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
           START_DATE: "2025-10-26"
+          MAX_TARGET: "30"
           DRY_RUN: ${{ inputs.dry_run }}
