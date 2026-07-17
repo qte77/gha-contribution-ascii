@@ -15,7 +15,7 @@ jobs:
     name: Mario spike block (Jan 5 - Feb 8)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./
         with:
           BITMAP: "10101,11111,10101,11111,10101,10001,11111"
@@ -29,7 +29,7 @@ jobs:
     needs: mario
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./
         with:
           BITMAP: "01110,11111,10101,11111,11111,11111,10101"
@@ -43,7 +43,7 @@ jobs:
     needs: ghost
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./
         with:
           BITMAP: "11011000010,01110001110,11111011111,10101011111,01110011011,01010011111,10001001110"
@@ -57,7 +57,7 @@ jobs:
     needs: galaxy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./
         with:
           BITMAP: "0111000001,1111100010,1111000100,1110011110,1111011110,1111101100,0111000000"
