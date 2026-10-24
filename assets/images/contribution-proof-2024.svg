@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="230" height="152">
+<style>@media (prefers-color-scheme: light){rect[fill="#0d1117"]{fill:#ffffff}rect[fill="#161b22"]{fill:#ebedf0}rect[fill="#39d353"]{fill:#216e39}text{fill:#57606a}}</style>
 <rect width="230" height="152" rx="6" fill="#0d1117"/>
 <text x="20" y="18" fill="#8b949e" font-family="monospace" font-size="11">Aug 2024</text>
 <text x="4" y="38" fill="#8b949e" font-family="monospace" font-size="9">S</text>

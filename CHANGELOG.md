@@ -17,6 +17,16 @@ Types of changes:
 
 ## [Unreleased]
 
+### Changed
+
+- README follows the qte77 doc-structure canon: tagline right after the H1;
+  badges ordered License → Version → CI; Version badge is blue and links to
+  the CHANGELOG; `## What`/`## How`/`## Why`/`## Refs` sections; Proof of Work
+  and the disclaimer collapsed into `<details>`. Usage, inputs and limitations
+  moved to `docs/advanced-usage.md`, along with Development;
+  the proof SVG moved to `assets/images/` and now adapts to light/dark theme.
+  The `bump-my-version` README search pattern follows the new badge. See #95.
+
 ### Fixed
 
 - `bump-and-release.yaml` cleanup no longer deletes the version tag/release on
