@@ -17,6 +17,10 @@ Types of changes:
 
 ## [Unreleased]
 
+---
+
+## [2.4.0] - 2026-11-09
+
 ### Changed
 
 - README follows the qte77 doc-structure canon: tagline right after the H1;
