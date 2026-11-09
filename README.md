@@ -3,7 +3,7 @@
 > GitHub Action that writes ASCII text or pixel art on your GitHub contribution graph using backdated commits — pure bash, default `GITHUB_TOKEN`, no PAT required.
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3.1-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.4.0-blue)](CHANGELOG.md)
 ![CodeQL](https://github.com/qte77/gha-contribution-ascii/actions/workflows/codeql.yaml/badge.svg)
 ![CodeFactor](https://www.codefactor.io/repository/github/qte77/gha-contribution-ascii/badge)
 ![Test Action](https://github.com/qte77/gha-contribution-ascii/actions/workflows/test-action.yml/badge.svg)
