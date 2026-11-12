@@ -17,6 +17,10 @@ Types of changes:
 
 ## [Unreleased]
 
+### Security
+
+- Pinned every remaining `uses:` ref in `.github/workflows/*` and `action.yaml` to its commit SHA (`actions/checkout@v7`, `callowayproject/bump-my-version@1.8.1`, `github/codeql-action/{init,autobuild,analyze}@v4`, the self-reference `qte77/gha-contribution-ascii@v2`), required by the org's new SHA-pinning Actions policy; this also fixes the resulting `CodeQL` workflow `startup_failure`. No version changes.
+
 ---
 
 ## [2.4.0] - 2026-11-09
