@@ -34,7 +34,7 @@ jobs:
     name: Test local code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       - uses: ./
         with:
           TEXT: ${{ inputs.text }}
@@ -48,7 +48,7 @@ jobs:
     name: Paint (published action, dry-run only)
     runs-on: ubuntu-latest
     steps:
-      - uses: qte77/gha-contribution-ascii@v2
+      - uses: qte77/gha-contribution-ascii@9c5ab8cca7a5d948aee97afb49a22900fb572155  # v2.4.0
         with:
           TEXT: ${{ inputs.text }}
           TOKEN: ${{ secrets.CONTRIBUTION_PAT || secrets.GITHUB_TOKEN }}
