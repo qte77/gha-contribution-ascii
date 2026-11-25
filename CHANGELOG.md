@@ -21,6 +21,10 @@ Types of changes:
 
 - Pinned every remaining `uses:` ref in `.github/workflows/*` and `action.yaml` to its commit SHA (`actions/checkout@v7`, `callowayproject/bump-my-version@1.8.1`, `github/codeql-action/{init,autobuild,analyze}@v4`, the self-reference `qte77/gha-contribution-ascii@v2`), required by the org's new SHA-pinning Actions policy; this also fixes the resulting `CodeQL` workflow `startup_failure`. No version changes.
 
+### Fixed
+
+- Moved `github/codeql-action/{init,autobuild,analyze}` to v4.39.4 together and grouped them in `.github/dependabot.yaml`, so Dependabot bumps all three in one PR. Separate PRs left one step on the old version, and the `Analyze` job failed on the version mismatch.
+
 ---
 
 ## [2.4.0] - 2026-11-09

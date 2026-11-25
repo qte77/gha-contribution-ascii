@@ -5,3 +5,9 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      # init, autobuild and analyze must run the same version: the analyze step
+      # fails when init wrote its config with a different one.
+      codeql-action:
+        patterns:
+          - "github/codeql-action*"
